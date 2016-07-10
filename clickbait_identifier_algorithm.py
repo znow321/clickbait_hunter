@@ -14,19 +14,25 @@ if not path.exists("clickbait_database"):  #Creates database dir if it's not the
 	create_gitignore.write("*\n!.gitignore")
 	create_gitignore.close()
 
-	
+
 def database_exists():
 	return glob('clickbait_database\\database.pickle')
+	
+	
+class Database_storage:
+	database = []
+	
+	def import_database(self):
+		if database_exists():
+			database_reader = open('clickbait_database\\database.pickle', 'r')
+			database = database_reader.read()
+			database_reader.close()
 
-
-def get_clickbait_database():  #Returns database it it's present
-	if database_exists():
-		database_reader = open('clickbait_database\\', 'r')
-		database = database_reader.read()
-		database_reader.close()
-		return database
-
-
+			
+database = Database_storage()
+database.import_database()
+	
+	
 def update_database():
 	pass
 
@@ -36,7 +42,6 @@ def analyze(sentence):
 	uppercase_words = re.findall('[A-Z][a-z\']*', sentence)
 	numbers = re.findall('[0-9]+', sentence)
 	
-
 
 def is_clickbait(sentence):  #User interface
 	while True:
