@@ -7,8 +7,8 @@ from glob import glob
 
 cls = lambda: system('cls')
 
-
-if not path.exists("clickbait_database"):  #Creates database dir if it's not there
+#Creates save directory with a .gitignore if it's not already there
+if not path.exists("clickbait_database"):  
 	makedirs("clickbait_database")
 	create_gitignore = open("clickbait_database\\.gitignore", "w")
 	create_gitignore.write("*\n!.gitignore")
@@ -40,12 +40,14 @@ class Database_storage:
 	def update_database(self):
 		pass
 	
-	def analyze(self,sentence):
+	#If the sentence is flagged as clickbait
+	def analyze(self,sentence):  
 		lowercase_words = re.findall('[a-z\']*', sentence)
 		uppercase_words = re.findall('[A-Z][a-z\']*', sentence)
 		numbers = re.findall('[0-9]+', sentence)
 
-	def is_clickbait(self,sentence):  #User interface
+	#User asking cycle
+	def is_clickbait(self,sentence):
 		while True:
 			if self.user_menu(sentence):
 				break
