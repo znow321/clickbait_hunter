@@ -15,36 +15,42 @@ if not path.exists("clickbait_database"):  #Creates database dir if it's not the
 	create_gitignore.close()
 
 
-def database_exists():
-	return glob('clickbait_database\\database.pickle')
-	
+def error(message, sleep_time=0):	
+	cls()
+	print(message)
+	sleep(sleep_time)
+	cls()
+
 	
 class Database_storage:
 	database = []
 	
+	def __init__(self):
+		Database_storage.database = self.import_database()
+	
+	def database_exists(self):
+		return glob('clickbait_database\\database.pickle')
+	
 	def import_database(self):
-		if database_exists():
+		if self.database_exists():
 			database_reader = open('clickbait_database\\database.pickle', 'r')
 			database = database_reader.read()
 			database_reader.close()
-
-			
-database = Database_storage()
-database.import_database()
 	
+	def update_database(self):
+		pass
 	
-def update_database():
-	pass
+	def analyze(self,sentence):
+		lowercase_words = re.findall('[a-z\']*', sentence)
+		uppercase_words = re.findall('[A-Z][a-z\']*', sentence)
+		numbers = re.findall('[0-9]+', sentence)
 
+	def is_clickbait(self,sentence):  #User interface
+		while True:
+			if self.user_menu(sentence):
+				break
 
-def analyze(sentence):
-	lowercase_words = re.findall('[a-z\']*', sentence)
-	uppercase_words = re.findall('[A-Z][a-z\']*', sentence)
-	numbers = re.findall('[0-9]+', sentence)
-	
-
-def is_clickbait(sentence):  #User interface
-	while True:
+	def user_menu(self, sentence):
 		cls()
 		ask_user = 'Do you think "%s" sounds like clickbait?' \
 					'\n\n1 - YES\n2 - NO\n3 - I WILL LET YOU DECIDE' \
@@ -53,12 +59,9 @@ def is_clickbait(sentence):  #User interface
 			answer = int(input(ask_user % (sentence)))
 			if answer not in [ 1, 2, 3 ]:
 				raise ValueError
-			break
+			return answer
 		except ValueError:
-			cls()
-			print('Invalid value entered, please try again...')
-			sleep(1)
-			cls()
-
-
-is_clickbait("You Won't believe")
+			error('Invalid value entered, please try again...', 1)
+			
+x = Database_storage()
+x.is_clickbait('XD')
