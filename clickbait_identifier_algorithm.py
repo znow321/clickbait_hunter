@@ -3,11 +3,13 @@ import pickle
 from os import system, path, makedirs
 from time import sleep
 from glob import glob
+from statistics import mean
 
 
 cls = lambda: system('cls')
 
-#Creates save directory with a .gitignore if it's not already there
+
+#  Creates save directory with a .gitignore if it's not already there
 if not path.exists("clickbait_database"):  
 	makedirs("clickbait_database")
 	create_gitignore = open("clickbait_database\\.gitignore", "w")
@@ -21,49 +23,127 @@ def error(message, sleep_time=0):
 	sleep(sleep_time)
 	cls()
 
-	
-class Database_storage:
-	database = []
+
+class DatabaseTools:
+	#  Words - All together, Sentences - All together, Statistics - clickbait only
+	database = {'words':{},'sentences':{},
+				'statistics':{'avg_lower':0, 'avg_start_upper':0, 
+				'avg_upper':0, 'avg_num':0}}
 	
 	def __init__(self):
-		Database_storage.database = self.import_database()
+		self._save_dir = 'clickbait_database\\database.pickle'
+		self.load_database()
 	
-	def database_exists(self):
-		return glob('clickbait_database\\database.pickle')
+	def __database_exists(self):
+		return glob(self._save_dir)
 	
-	def import_database(self):
-		if self.database_exists():
-			database_reader = open('clickbait_database\\database.pickle', 'r')
-			database = database_reader.read()
-			database_reader.close()
+	def load_database(self):
+		if self.__database_exists():
+			database_loader = open(self._save_dir, 'rb')
+			DatabaseTools.database = pickle.load(database_loader)
+			database_loader.close()
 	
-	def update_database(self):
+	def save_database(self):
+		database_saver = open(self._save_dir, 'wb')
+		pickle.dump(DatabaseTools.database, database_saver)
+		database_saver.close()
+
+
+class WordTools:
+	def decrease_check(self, word):
+		in_database = word in DatabaseTools.database['words']
+		can_subtract = DatabaseTools.database['words'][word] >= 1
+		return in_database and can_subtract
+
+	def increase_weight(self):
+		for word in self.sentence:
+			if word in DatabaseTools.database['words']:
+				DatabaseTools.database['words'][word] += 1
+			else:
+				DatabaseTools.database['words'][word] = 1
+
+	def decrease_weight(self):
+		for word in self.sentence:
+			if self.decrease_check(word):
+				DatabaseTools.database['words'][word] -= 1
+
+
+class SentenceTools:
+	def can_automerge(self, clickbait_status):
+		in_database = self.sentence in DatabaseTools.database['sentences']
+		is_conflict = DatabaseTools.database['sentences'][self.sentence] != clickbait_status
+		return in_database and not is_conflict
+
+	def update_sentence_database(self, clickbait_status=True):
+		if not self.can_automerge():
+			clickbait_status = self.resolve_conflicts(clickbait_status)
+		DatabaseTools.database['sentences'][self.sentence] = clickbait_status
+
+	def resolve_conflicts(self, clickbait_status):  #  = conflicting status
+		status = ('clickbait', 'non-clickbait')
+		if clickbait_status: status = status[::-1]
+		say = 'Do you wan\'t to toggle the "%s" sentence status' \
+				'from %s to %s?\n(Y/N)' % (self.sentence, status[0], status[1])
+		print(say)
+
+
+
+class Logic:
+	#  If the sentence is flagged as clickbait
+	def analyze(self):
+		total_words = len(self.sentence.split())
+		lowercase_words = len(findall('[a-z\']*', self.sentence))
+		uppercase_starting_words = len(findall('[A-Z][a-z\']*', self.sentence))
+		uppercase_words = len(findall('[A-Z\']*', self.sentence))
+		numbers = len(findall('[0-9]+', self.sentence))
+		stats = percentage(total_words, lowercase_words, 
+				uppercase_starting_words, uppercase_words, number)
+
+	def percentage(self, total=0, lower=0, upper_start=0, upper=0, num=0):
+		percent_per_word = 100 / total
+		percent_lower = lower * percent_per_word
+		percent_upper_start = upper_start * percent_per_word
+		percent_upper = upper * percent_per_word
+		percent_num = num * percent_per_word
+		return [percent_lower, percent_upper_start, percent_upper, percent_num]
+
+
+	def identify(self):
 		pass
-	
-	#If the sentence is flagged as clickbait
-	def analyze(self,sentence):  
-		lowercase_words = re.findall('[a-z\']*', sentence)
-		uppercase_words = re.findall('[A-Z][a-z\']*', sentence)
-		numbers = re.findall('[0-9]+', sentence)
 
-	#User asking cycle
-	def is_clickbait(self,sentence):
+
+class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
+	def __init__(self, sentence):
+		self.sentence = sentence
+
+	def user_menu(self):
 		while True:
-			if self.user_menu(sentence):
+			cls()
+			choice = 'Do you think "%s" sounds like clickbait?' \
+						'\n\n1 - YES\n2 - NO\n3 - I\'LL LET YOU DECIDE' \
+						'\n\nPlease enter a number ' \
+						'corresponding to your answer: '
+			try:
+				answer = int(input(choice % (self.sentence)))
+				if answer not in [ 1, 2, 3 ]:
+					raise ValueError
 				break
+			except ValueError:
+				error('Invalid value entered, please try again...', 1)
+		return answer
 
-	def user_menu(self, sentence):
-		cls()
-		ask_user = 'Do you think "%s" sounds like clickbait?' \
-					'\n\n1 - YES\n2 - NO\n3 - I WILL LET YOU DECIDE' \
-					'\n\nPlease enter a number corresponding to your answer: '
-		try:
-			answer = int(input(ask_user % (sentence)))
-			if answer not in [ 1, 2, 3 ]:
-				raise ValueError
-			return answer
-		except ValueError:
-			error('Invalid value entered, please try again...', 1)
-			
-x = Database_storage()
-x.is_clickbait('XD')
+	#  User asking cycle !!! CALL FIRST !!!
+	def ask_user(self):
+		choice = self.user_menu()
+		if choice == 1:
+			self.analyze()
+		elif choice == 2:
+			self.decrease_weight()
+		elif choice == 3:
+			self.identify()
+		else:
+			raise ValueError('Illegal value "%s" recieved!' % (choice))
+
+
+x = ClickbaitIdentifierUI('xd')
+x.ask_user()
