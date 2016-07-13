@@ -1,5 +1,5 @@
-from re import findall
-import pickle
+from re import findall, sub
+import sqlite3
 from os import system, path, makedirs
 from time import sleep
 from glob import glob
@@ -26,27 +26,68 @@ def error(message, sleep_time=0):
 
 class DatabaseTools:
 	#  Words - All together, Sentences - All together, Statistics - clickbait only
+	#  Moving to sql
 	database = {'words':{},'sentences':{},
 				'statistics':{'avg_lower':0, 'avg_start_upper':0, 
 				'avg_upper':0, 'avg_num':0}}
 	
-	def __init__(self):
-		self._save_dir = 'clickbait_database\\database.pickle'
-		self.load_database()
-	
 	def __database_exists(self):
-		return glob(self._save_dir)
+		return glob(self.save_dir)
 	
 	def load_database(self):
 		if self.__database_exists():
-			database_loader = open(self._save_dir, 'rb')
-			DatabaseTools.database = pickle.load(database_loader)
-			database_loader.close()
+
+			self.db_cursor.execute("SELECT word, clickbait_index FROM Words")
+			for word, clickbait_index in db_load_cursor.fetchall():
+				DatabaseTools.database['words'][word] = clickbait_index
+
+			self.db_cursor.execute("SELECT sentence, clickbait_status FROM Sentences")
+			for sentence, clickbait_status in db_load_cursor.fetchall():
+				clickbait_status = True if clickbait_status == 1 else False  #  Int to bool
+				DatabaseTools.database['sentences'][sentence] = clickbait_status
+
+			self.db_cursor.execute("SELECT keyword, value FROM Statistics")
+			for key, value in db_load_cursor.fetchall():
+				DatabaseTools.database['statistics'][key] = value
 	
+	def sql_insert(self, table, key, value):
+		template = "INSERT INTO {TABLE} VALUES( ?, ?)"
+		command = sub('{TABLE}', table.title(), template)
+		self.db_cursor.execute(command, (key, value))
+
+	def sql_update(self, table, column_to_update, keyword, value):
+		template = "UPDATE {TABLE} SET {VALUE} = ?" \
+						   " WHERE {KEY}='{KEY}'"
+		command = sub('{TABLE}', table, template)
+		command = sub('{VALUE}', column_to_update, command)
+		command = sub('{KEY}', keyword, command)
+		self.db_cursor.execute(command, (value))
+						   # {VALUE} = Clickbait index etc., {KEY} = Word or sentence name
+
+	def is_value_current(self, table, column, key, value, new_value):
+		pass
+
+
+	def sql_create_tables(self, tables):
+		for table in tables:
+			self.db_cursor.execute("CREATE TABLE IF NOT EXISTS %s" % (table))
+
 	def save_database(self):
-		database_saver = open(self._save_dir, 'wb')
-		pickle.dump(DatabaseTools.database, database_saver)
-		database_saver.close()
+		self.db_conn = sqlite3.connect(self.save_dir)
+		self.db_cursor = self.db_save_conn.cursor()
+
+		tables = ('Words(word TEXT, clickbait_index INTEGER)', 
+				  'Sentences(sentence TEXT, clickbait_status INTEGER)',  #No native support for bools..
+				  'Statistics(keyword TEXT, value INTEGER)')
+
+		for table, columns in DatabaseTools.database.items():
+			command = sub("{TABLE}", table.title(), command_base)
+			for key, value in DatabaseTools.database[table].items():
+				if not self.__database_exists():
+					pass
+				self.db_cursor.execute(command, (key, value))
+
+		self.db_conn.commit()
 
 
 class WordTools:
@@ -84,8 +125,17 @@ class SentenceTools:
 		if clickbait_status: status = status[::-1]
 		say = 'Do you wan\'t to toggle the "%s" sentence status' \
 				'from %s to %s?\n(Y/N)' % (self.sentence, status[0], status[1])
-		print(say)
-
+		while True:
+			try:
+				choice = input(say)
+				assert(choice.lower() in ['y', 'n'])
+				break
+			except ValueError, AssertionError:
+				error('Invalid option entered, please try again...', 1)
+		if choice = 'y':
+			return not clickbait_status
+		else:
+			return clickbait_status
 
 
 class Logic:
@@ -115,6 +165,11 @@ class Logic:
 class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 	def __init__(self, sentence):
 		self.sentence = sentence
+		self.save_dir = 'clickbait_database\\database.db'
+		self.load_database()
+		self.db_conn = sqlite3.connect(self.save_dir)
+		self.db_cursor = self.db_conn.cursor()
+		
 
 	def user_menu(self):
 		while True:
@@ -146,4 +201,7 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 
 
 x = ClickbaitIdentifierUI('xd')
-x.ask_user()
+DatabaseTools.database = {'words':{'Testing sql':1999, 'SQLite':42}, 
+						  'sentences':{'Kazooo kid':True, 'Haxors are cool':True}, 
+						  'statistics':{'avg_lower':42, 'avg_start_upper':1337, 'avg_upper':404, 'avg_num':1}}
+x.save_database()
