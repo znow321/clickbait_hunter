@@ -130,9 +130,9 @@ class SentenceTools:
 				choice = input(say)
 				assert(choice.lower() in ['y', 'n'])
 				break
-			except ValueError, AssertionError:
+			except (ValueError, AssertionError):
 				error('Invalid option entered, please try again...', 1)
-		if choice = 'y':
+		if choice == 'y':
 			return not clickbait_status
 		else:
 			return clickbait_status
