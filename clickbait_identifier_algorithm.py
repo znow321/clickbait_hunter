@@ -10,10 +10,10 @@ cls = lambda: system('cls')
 
 
 #  Creates save directory with a .gitignore if it's not already there
-if not path.exists("clickbait_database"):  
-	makedirs("clickbait_database")
-	create_gitignore = open("clickbait_database\\.gitignore", "w")
-	create_gitignore.write("*\n!.gitignore")
+if not path.exists('clickbait_database'):  
+	makedirs('clickbait_database')
+	create_gitignore = open(join('clickbait_database','.gitignore'), 'w')
+	create_gitignore.write('*\n!.gitignore')
 	create_gitignore.close()
 
 
@@ -26,7 +26,6 @@ def error(message, sleep_time=0):
 
 class DatabaseTools:
 	#  Words - All together, Sentences - All together, Statistics - clickbait only
-	#  Moving to sql
 	database = {'words':{},'sentences':{},
 				'statistics':{'avg_lower':0, 'avg_start_upper':0, 
 				'avg_upper':0, 'avg_num':0}}
@@ -50,43 +49,65 @@ class DatabaseTools:
 			for key, value in db_load_cursor.fetchall():
 				DatabaseTools.database['statistics'][key] = value
 	
-	def sql_insert(self, table, key, value):
+	#  Direct insertion of new 'profiles', no further steps needed
+	def sql_insert_command(self, table):  
 		template = "INSERT INTO {TABLE} VALUES( ?, ?)"
-		command = sub('{TABLE}', table.title(), template)
-		self.db_cursor.execute(command, (key, value))
+		return sub('{TABLE}', table, template)
 
-	def sql_update(self, table, column_to_update, keyword, value):
-		template = "UPDATE {TABLE} SET {VALUE} = ?" \
-						   " WHERE {KEY}='{KEY}'"
+	def sql_update_command(self, table, column_to_update, comparison_column):
+		template = "UPDATE {TABLE} SET {VALUE} = (?) WHERE {KEY}= (?) "
 		command = sub('{TABLE}', table, template)
 		command = sub('{VALUE}', column_to_update, command)
-		command = sub('{KEY}', keyword, command)
-		self.db_cursor.execute(command, (value))
-						   # {VALUE} = Clickbait index etc., {KEY} = Word or sentence name
+		return sub('{KEY}', comparison_column, command)
 
-	def is_value_current(self, table, column, key, value, new_value):
-		pass
+	def sql_update_or_input(self, tables_info):
+		for table in tables_info:
+			input('Current table: ' + str(table))
+			for current_row_name, new_value in DatabaseTools.database[table[0].lower()].items():
+				print(current_row_name)
+				input(new_value)
+				if self.item_exists(table[0], table[1], current_row_name):
+					input('The current value does exist')
+					if not self.is_value_current(table[0], table[2], table[1], new_value, current_row_name):
+						input('The current value is not in the db')
+						command = self.sql_update_command(table[0], table[2], table[1])
+						print(command)
+						self.db_cursor.execute(command, (new_value, current_row_name))  #  Update
+				else:
+					command = self.sql_insert_command(table[0])
+					self.db_cursor.execute(command, (current_row_name, new_value))  #  Insert
+					input('The value has been newly created')
 
+	def item_exists(self, table, column, column_value):
+		template = 'SELECT {COLUMN} FROM {TABLE} WHERE {COLUMN} = ?'
+		command = sub('{COLUMN}', column, template)
+		command = sub('{TABLE}', table, command)
+		self.db_cursor.execute(command, (column_value,))
+		return len(self.db_cursor.fetchall()) > 0
+
+	def is_value_current(self, table, column_to_update, comparison_column, new_value, current_row_name):
+		template = 'SELECT {COMPARISON_COLUMN} FROM {TABLE} WHERE {COLUMN_TO_UPDATE} = ? AND {COMPARISON_COLUMN} = ?'
+		command = sub('{COMPARISON_COLUMN}', comparison_column, template)
+		command = sub('{TABLE}', table, command)
+		command = sub('{COLUMN_TO_UPDATE}', column_to_update, command)
+		self.db_cursor.execute(command, (new_value, current_row_name))
+		return len(self.db_cursor.fetchall()) > 0
 
 	def sql_create_tables(self, tables):
 		for table in tables:
 			self.db_cursor.execute("CREATE TABLE IF NOT EXISTS %s" % (table))
 
 	def save_database(self):
-		self.db_conn = sqlite3.connect(self.save_dir)
-		self.db_cursor = self.db_save_conn.cursor()
+		#  ( Table_name, comparison_column, new_value )
+		tables_info = (('Words', 'word', 'clickbait_index'),
+				       ('Sentences', 'sentence', 'clickbait_status'),
+				       ('Statistics', 'keyword', 'value'))
 
-		tables = ('Words(word TEXT, clickbait_index INTEGER)', 
-				  'Sentences(sentence TEXT, clickbait_status INTEGER)',  #No native support for bools..
-				  'Statistics(keyword TEXT, value INTEGER)')
-
-		for table, columns in DatabaseTools.database.items():
-			command = sub("{TABLE}", table.title(), command_base)
-			for key, value in DatabaseTools.database[table].items():
-				if not self.__database_exists():
-					pass
-				self.db_cursor.execute(command, (key, value))
-
+		#  Table creation template
+		tables = list(['%s(%s TEXT, %s INTEGER)' % (table, key, value) for table, key, value in tables_info])
+		
+		self.sql_create_tables(tables)
+		self.sql_update_or_input(tables_info)
 		self.db_conn.commit()
 
 
@@ -165,11 +186,9 @@ class Logic:
 class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 	def __init__(self, sentence):
 		self.sentence = sentence
-		self.save_dir = 'clickbait_database\\database.db'
-		self.load_database()
+		self.save_dir = path.join('clickbait_database', 'database.db')
 		self.db_conn = sqlite3.connect(self.save_dir)
 		self.db_cursor = self.db_conn.cursor()
-		
 
 	def user_menu(self):
 		while True:
@@ -201,7 +220,7 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 
 
 x = ClickbaitIdentifierUI('xd')
-DatabaseTools.database = {'words':{'Testing sql':1999, 'SQLite':42}, 
+DatabaseTools.database = {'words':{'Testing sql':2015, 'SQLite':42}, 
 						  'sentences':{'Kazooo kid':True, 'Haxors are cool':True}, 
 						  'statistics':{'avg_lower':42, 'avg_start_upper':1337, 'avg_upper':404, 'avg_num':1}}
 x.save_database()
