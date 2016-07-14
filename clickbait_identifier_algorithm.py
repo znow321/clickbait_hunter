@@ -62,21 +62,15 @@ class DatabaseTools:
 
 	def sql_update_or_input(self, tables_info):
 		for table in tables_info:
-			input('Current table: ' + str(table))
 			for current_row_name, new_value in DatabaseTools.database[table[0].lower()].items():
-				print(current_row_name)
-				input(new_value)
 				if self.item_exists(table[0], table[1], current_row_name):
-					input('The current value does exist')
 					if not self.is_value_current(table[0], table[2], table[1], new_value, current_row_name):
-						input('The current value is not in the db')
 						command = self.sql_update_command(table[0], table[2], table[1])
 						print(command)
 						self.db_cursor.execute(command, (new_value, current_row_name))  #  Update
 				else:
 					command = self.sql_insert_command(table[0])
 					self.db_cursor.execute(command, (current_row_name, new_value))  #  Insert
-					input('The value has been newly created')
 
 	def item_exists(self, table, column, column_value):
 		template = 'SELECT {COLUMN} FROM {TABLE} WHERE {COLUMN} = ?'
