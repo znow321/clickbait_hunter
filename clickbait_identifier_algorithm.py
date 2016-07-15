@@ -35,18 +35,17 @@ class DatabaseTools:
 	
 	def load_database(self):
 		if self.__database_exists():
-
 			self.db_cursor.execute("SELECT word, clickbait_index FROM Words")
-			for word, clickbait_index in db_load_cursor.fetchall():
+			for word, clickbait_index in self.db_cursor.fetchall():
 				DatabaseTools.database['words'][word] = clickbait_index
 
 			self.db_cursor.execute("SELECT sentence, clickbait_status FROM Sentences")
-			for sentence, clickbait_status in db_load_cursor.fetchall():
+			for sentence, clickbait_status in self.db_cursor.fetchall():
 				clickbait_status = True if clickbait_status == 1 else False  #  Int to bool
 				DatabaseTools.database['sentences'][sentence] = clickbait_status
 
 			self.db_cursor.execute("SELECT keyword, value FROM Statistics")
-			for key, value in db_load_cursor.fetchall():
+			for key, value in self.db_cursor.fetchall():
 				DatabaseTools.database['statistics'][key] = value
 	
 	#  Direct insertion of new 'profiles', no further steps needed
@@ -214,7 +213,5 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 
 
 x = ClickbaitIdentifierUI('xd')
-DatabaseTools.database = {'words':{'Testing sql':2015, 'SQLite':42}, 
-						  'sentences':{'Kazooo kid':True, 'Haxors are cool':True}, 
-						  'statistics':{'avg_lower':42, 'avg_start_upper':1337, 'avg_upper':404, 'avg_num':1}}
+x.load_database()
 x.save_database()
