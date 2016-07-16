@@ -4,9 +4,16 @@ from os import system, path, makedirs
 from time import sleep
 from glob import glob
 from statistics import mean
+import platform
 
 
-cls = lambda: system('cls')
+def cls():
+	if platform.system() == 'Linux':
+		system('clear')
+	elif platform.system() == 'Windows':
+		system('cls')
+	else:
+		raise Exception('Shutting down, unknown operating system detected...')
 
 
 #  Creates save directory with a .gitignore if it's not already there
@@ -29,11 +36,13 @@ class DatabaseTools:
 	database = {'words':{},'sentences':{},
 				'statistics':{'avg_lower':0, 'avg_start_upper':0, 
 				'avg_upper':0, 'avg_num':0}}
-	
+
+
 	def __database_exists(self):
 		return glob(self.save_dir)
 	
 	def load_database(self):
+		self.db_copy = DatabaseTools.database  #  To compare what words to delete
 		if self.__database_exists():
 			self.db_cursor.execute("SELECT word, clickbait_index FROM Words")
 			for word, clickbait_index in self.db_cursor.fetchall():
@@ -60,6 +69,7 @@ class DatabaseTools:
 		return sub('{KEY}', comparison_column, command)
 
 	def sql_update_or_input(self, tables_info):
+		self.remove_queue()  # DEBUG
 		for table in tables_info:
 			for current_row_name, new_value in DatabaseTools.database[table[0].lower()].items():
 				if self.item_exists(table[0], table[1], current_row_name):
@@ -77,6 +87,16 @@ class DatabaseTools:
 		command = sub('{TABLE}', table, command)
 		self.db_cursor.execute(command, (column_value,))
 		return len(self.db_cursor.fetchall()) > 0
+
+	def remove_queue(self): 
+		for current, legacy in zip(DatabaseTools.database, self.db_copy):
+			print(current)
+			input(legacy)
+
+	def item_remove_command(self, table, column):  #  Remove non-existent values
+		template = 'DELETE FROM {TABLE} WHERE {COLUMN} = ?'
+		command = sub('{TABLE}', table, template)
+		return sub('{COLUMN}', column, command)
 
 	def is_value_current(self, table, column_to_update, comparison_column, new_value, current_row_name):
 		template = 'SELECT {COMPARISON_COLUMN} FROM {TABLE} WHERE {COLUMN_TO_UPDATE} = ? AND {COMPARISON_COLUMN} = ?'
@@ -213,5 +233,4 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 
 
 x = ClickbaitIdentifierUI('xd')
-x.load_database()
 x.save_database()
