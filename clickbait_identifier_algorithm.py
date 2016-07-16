@@ -41,7 +41,21 @@ class DatabaseTools:
 	def __database_exists(self):
 		return glob(self.save_dir)
 	
+	def db_connect(function):
+		def wrapper(self):
+			if self.__database_exists():
+				self.db_conn = sqlite3.connect(self.save_dir)
+				self.db_cursor = self.db_conn.cursor()
+				function(self)
+				self.db_conn.close()
+			else:
+				function(self)
+		return wrapper
+
+	@db_connect
 	def load_database(self):
+		if self.__database_exists():
+			self.db_connect()
 		self.db_copy = DatabaseTools.database  #  To compare what words to delete
 		if self.__database_exists():
 			self.db_cursor.execute("SELECT word, clickbait_index FROM Words")
@@ -111,6 +125,8 @@ class DatabaseTools:
 			self.db_cursor.execute("CREATE TABLE IF NOT EXISTS %s" % (table))
 
 	def save_database(self):
+		self.db_conn = sqlite3.connect(self.save_dir)
+		self.db_cursor = self.db_conn.cursor()
 		#  ( Table_name, comparison_column, new_value )
 		tables_info = (('Words', 'word', 'clickbait_index'),
 				       ('Sentences', 'sentence', 'clickbait_status'),
@@ -200,8 +216,6 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 	def __init__(self, sentence):
 		self.sentence = sentence
 		self.save_dir = path.join('clickbait_database', 'database.db')
-		self.db_conn = sqlite3.connect(self.save_dir)
-		self.db_cursor = self.db_conn.cursor()
 
 	def user_menu(self):
 		while True:
