@@ -55,9 +55,6 @@ class DatabaseTools:
 	@db_connect
 	def load_database(self):
 		if self.__database_exists():
-			self.db_connect()
-		self.db_copy = DatabaseTools.database  #  To compare what words to delete
-		if self.__database_exists():
 			self.db_cursor.execute("SELECT word, clickbait_index FROM Words")
 			for word, clickbait_index in self.db_cursor.fetchall():
 				DatabaseTools.database['words'][word] = clickbait_index
@@ -70,29 +67,35 @@ class DatabaseTools:
 			self.db_cursor.execute("SELECT keyword, value FROM Statistics")
 			for key, value in self.db_cursor.fetchall():
 				DatabaseTools.database['statistics'][key] = value
-	
+		self.db_copy = DatabaseTools.database  #  To compare what words to delete
+
 	#  Direct insertion of new 'profiles', no further steps needed
 	def sql_insert_command(self, table):  
 		template = "INSERT INTO {TABLE} VALUES( ?, ?)"
 		return sub('{TABLE}', table, template)
 
 	def sql_update_command(self, table, column_to_update, comparison_column):
-		template = "UPDATE {TABLE} SET {VALUE} = (?) WHERE {KEY}= (?) "
+		template = "UPDATE {TABLE} SET {VALUE} = ? WHERE {KEY}= ? "
 		command = sub('{TABLE}', table, template)
 		command = sub('{VALUE}', column_to_update, command)
 		return sub('{KEY}', comparison_column, command)
 
-	def sql_update_or_input(self, tables_info):
+	def sql_update_or_input(self, tables_info):  #  Ugly method, needs refactoring...
 		self.remove_queue()  # DEBUG
 		for table in tables_info:
+			print('SAVING - Current table: %s' % (str(table)))
 			for current_row_name, new_value in DatabaseTools.database[table[0].lower()].items():
+				print('SAVING - current_row, new_value: %s, %s' % (current_row_name, new_value))
 				if self.item_exists(table[0], table[1], current_row_name):
 					if not self.is_value_current(table[0], table[2], table[1], new_value, current_row_name):
 						command = self.sql_update_command(table[0], table[2], table[1])
+						input('THE CURRENT VALUE WILL BE UPDATED\nCOMMAND:')
 						print(command)
 						self.db_cursor.execute(command, (new_value, current_row_name))  #  Update
 				else:
 					command = self.sql_insert_command(table[0])
+					input('THE CURRENT VALUE WILL BE INSERTED\nCOMMAND:')
+					print(command)
 					self.db_cursor.execute(command, (current_row_name, new_value))  #  Insert
 
 	def item_exists(self, table, column, column_value):
@@ -104,8 +107,7 @@ class DatabaseTools:
 
 	def remove_queue(self): 
 		for current, legacy in zip(DatabaseTools.database, self.db_copy):
-			print(current)
-			input(legacy)
+			pass
 
 	def item_remove_command(self, table, column):  #  Remove non-existent values
 		template = 'DELETE FROM {TABLE} WHERE {COLUMN} = ?'
@@ -207,7 +209,6 @@ class Logic:
 		percent_num = num * percent_per_word
 		return [percent_lower, percent_upper_start, percent_upper, percent_num]
 
-
 	def identify(self):
 		pass
 
@@ -247,4 +248,10 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 
 
 x = ClickbaitIdentifierUI('xd')
+x.load_database()
+DatabaseTools.database = {'words':{},'sentences':{},
+							'statistics':{'avg_lower':12, 'avg_start_upper':5, 
+							'avg_upper':15, 'avg_num':10}}
+input(DatabaseTools.database)
+x.user_menu()
 x.save_database()
