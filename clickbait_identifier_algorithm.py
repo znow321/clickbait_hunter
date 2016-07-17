@@ -40,6 +40,7 @@ class DatabaseTools:
 
 	def __database_exists(self):
 		return glob(self.save_dir)
+
 	
 	def db_connect(function):
 		def wrapper(self):
@@ -69,16 +70,21 @@ class DatabaseTools:
 				DatabaseTools.database['statistics'][key] = value
 		self.db_copy = DatabaseTools.database  #  To compare what words to delete
 
+
 	#  Direct insertion of new 'profiles', no further steps needed
-	def sql_insert_command(self, table):  
-		template = "INSERT INTO {TABLE} VALUES( ?, ?)"
-		return sub('{TABLE}', table, template)
+	def sql_insert(self, table, val1, val2):
+
+		command = "INSERT INTO {TABLE}"\
+				  " VALUES( '{val1}', {val2})".format(TABLE=table, val1=val1, val2=val2)
+		self.db_cursor.execute(command)
+
 
 	def sql_update_command(self, table, column_to_update, comparison_column):
 		template = "UPDATE {TABLE} SET {VALUE} = ? WHERE {KEY}= ? "
 		command = sub('{TABLE}', table, template)
 		command = sub('{VALUE}', column_to_update, command)
 		return sub('{KEY}', comparison_column, command)
+
 
 	def sql_update_or_input(self, tables_info):  #  Ugly method, needs refactoring...
 		self.remove_queue()  # DEBUG
@@ -91,35 +97,46 @@ class DatabaseTools:
 						command = self.sql_update_command(table[0], table[2], table[1])
 						input('THE CURRENT VALUE WILL BE UPDATED\nCOMMAND:')
 						print(command)
-						self.db_cursor.execute(command, (new_value, current_row_name))  #  Update
+						self.sql_insert(*table)  #  Update
 				else:
 					command = self.sql_insert_command(table[0])
 					input('THE CURRENT VALUE WILL BE INSERTED\nCOMMAND:')
 					print(command)
 					self.db_cursor.execute(command, (current_row_name, new_value))  #  Insert
 
+
 	def item_exists(self, table, column, column_value):
 		template = 'SELECT {COLUMN} FROM {TABLE} WHERE {COLUMN} = ?'
 		command = sub('{COLUMN}', column, template)
 		command = sub('{TABLE}', table, command)
 		self.db_cursor.execute(command, (column_value,))
+
 		return len(self.db_cursor.fetchall()) > 0
+
 
 	def remove_queue(self): 
 		for current, legacy in zip(DatabaseTools.database, self.db_copy):
 			pass
 
+
 	def item_remove_command(self, table, column):  #  Remove non-existent values
 		template = 'DELETE FROM {TABLE} WHERE {COLUMN} = ?'
 		command = sub('{TABLE}', table, template)
+
 		return sub('{COLUMN}', column, command)
 
-	def is_value_current(self, table, column_to_update, comparison_column, new_value, current_row_name):
-		template = 'SELECT {COMPARISON_COLUMN} FROM {TABLE} WHERE {COLUMN_TO_UPDATE} = ? AND {COMPARISON_COLUMN} = ?'
-		command = sub('{COMPARISON_COLUMN}', comparison_column, template)
-		command = sub('{TABLE}', table, command)
-		command = sub('{COLUMN_TO_UPDATE}', column_to_update, command)
-		self.db_cursor.execute(command, (new_value, current_row_name))
+
+	def is_value_current(self, table, column_to_update, 
+						 comparison_column, new_value, 
+						 current_row_name):
+
+		command = 'SELECT {COMPARISON_COLUMN} FROM {TABLE} '\
+				   'WHERE {COLUMN_TO_UPDATE} = {NEW_VALUE} AND'\
+				   ' {COMPARISON_COLUMN} = "{CURRENT_ROW_NAME}"'.format(COMPARISON_COLUMN=comparison_column,
+				   													  TABLE=table, COLUMN_TO_UPDATE=column_to_update,
+				   													  NEW_VALUE=new_value, CURRENT_ROW_NAME=current_row_name)
+		input(command)
+		self.db_cursor.execute(command)
 		return len(self.db_cursor.fetchall()) > 0
 
 	def sql_create_tables(self, tables):
