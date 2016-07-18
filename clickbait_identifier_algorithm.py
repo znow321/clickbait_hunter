@@ -17,14 +17,14 @@ def cls():
 
 
 #  Creates save directory with a .gitignore if it's not already there
-if not path.exists('clickbait_database'):  
+if not path.exists('clickbait_database'):
 	makedirs('clickbait_database')
 	create_gitignore = open(join('clickbait_database','.gitignore'), 'w')
 	create_gitignore.write('*\n!.gitignore')
 	create_gitignore.close()
 
 
-def error(message, sleep_time=0):	
+def error(message, sleep_time=0):
 	cls()
 	print(message)
 	sleep(sleep_time)
@@ -41,7 +41,7 @@ class DatabaseTools:
 	def __database_exists(self):
 		return glob(self.save_dir)
 
-	
+
 	def db_connect(function):
 		def wrapper(self):
 			if self.__database_exists():
@@ -73,36 +73,32 @@ class DatabaseTools:
 
 	#  Direct insertion of new 'profiles', no further steps needed
 	def sql_insert(self, table, val1, val2):
-
 		command = "INSERT INTO {TABLE}"\
 				  " VALUES( '{val1}', {val2})".format(TABLE=table, val1=val1, val2=val2)
+		input(command)
 		self.db_cursor.execute(command)
+		self.db_conn.commit()
 
 
-	def sql_update_command(self, table, column_to_update, comparison_column):
-		template = "UPDATE {TABLE} SET {VALUE} = ? WHERE {KEY}= ? "
-		command = sub('{TABLE}', table, template)
-		command = sub('{VALUE}', column_to_update, command)
-		return sub('{KEY}', comparison_column, command)
+	def sql_update(self, table, column_to_update, comparison_column, new_value, current_row):
+		template = "UPDATE {TABLE} SET {VALUE} = {NEW_VALUE} WHERE {KEY} ="\
+				   "{CURRENT_ROW}".format(TALBE=table, VALUE=column_to_update,
+				   								NEW_VALUE=new_value, KEY=comparison_column,
+				   								CURRENT_ROW=current_row)
+		input(command)
+		self.db_cursor.execute(command)
+		self.db_conn.commit()
 
 
 	def sql_update_or_input(self, tables_info):  #  Ugly method, needs refactoring...
-		self.remove_queue()  # DEBUG
+		#self.remove_queue()  # DEBUG
 		for table in tables_info:
-			print('SAVING - Current table: %s' % (str(table)))
 			for current_row_name, new_value in DatabaseTools.database[table[0].lower()].items():
-				print('SAVING - current_row, new_value: %s, %s' % (current_row_name, new_value))
 				if self.item_exists(table[0], table[1], current_row_name):
 					if not self.is_value_current(table[0], table[2], table[1], new_value, current_row_name):
-						command = self.sql_update_command(table[0], table[2], table[1])
-						input('THE CURRENT VALUE WILL BE UPDATED\nCOMMAND:')
-						print(command)
-						self.sql_insert(*table)  #  Update
+						self.sql_update(table[0], table[2], table[1], new_value, current_row_name)  #  Update
 				else:
-					command = self.sql_insert_command(table[0])
-					input('THE CURRENT VALUE WILL BE INSERTED\nCOMMAND:')
-					print(command)
-					self.db_cursor.execute(command, (current_row_name, new_value))  #  Insert
+					self.sql_insert(table[0], current_row_name, new_value)  #  Insert
 
 
 	def item_exists(self, table, column, column_value):
@@ -110,7 +106,6 @@ class DatabaseTools:
 		command = sub('{COLUMN}', column, template)
 		command = sub('{TABLE}', table, command)
 		self.db_cursor.execute(command, (column_value,))
-
 		return len(self.db_cursor.fetchall()) > 0
 
 
@@ -131,11 +126,10 @@ class DatabaseTools:
 						 current_row_name):
 
 		command = 'SELECT {COMPARISON_COLUMN} FROM {TABLE} '\
-				   'WHERE {COLUMN_TO_UPDATE} = {NEW_VALUE} AND'\
-				   ' {COMPARISON_COLUMN} = "{CURRENT_ROW_NAME}"'.format(COMPARISON_COLUMN=comparison_column,
+			  'WHERE {COLUMN_TO_UPDATE} = {NEW_VALUE} AND'\
+			  ' {COMPARISON_COLUMN} = "{CURRENT_ROW_NAME}"'.format(COMPARISON_COLUMN=comparison_column,
 				   													  TABLE=table, COLUMN_TO_UPDATE=column_to_update,
 				   													  NEW_VALUE=new_value, CURRENT_ROW_NAME=current_row_name)
-		input(command)
 		self.db_cursor.execute(command)
 		return len(self.db_cursor.fetchall()) > 0
 
@@ -153,7 +147,7 @@ class DatabaseTools:
 
 		#  Table creation template
 		tables = list(['%s(%s TEXT, %s INTEGER)' % (table, key, value) for table, key, value in tables_info])
-		
+
 		self.sql_create_tables(tables)
 		self.sql_update_or_input(tables_info)
 		self.db_conn.commit()
@@ -233,7 +227,7 @@ class Logic:
 class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 	def __init__(self, sentence):
 		self.sentence = sentence
-		self.save_dir = path.join('clickbait_database', 'database.db')
+		self.save_dir = path.join('clickbait_database', 'database.sqlite')
 
 	def user_menu(self):
 		while True:
@@ -266,9 +260,9 @@ class ClickbaitIdentifierUI(Logic, WordTools, DatabaseTools, SentenceTools):
 
 x = ClickbaitIdentifierUI('xd')
 x.load_database()
-DatabaseTools.database = {'words':{},'sentences':{},
-							'statistics':{'avg_lower':12, 'avg_start_upper':5, 
-							'avg_upper':15, 'avg_num':10}}
+DatabaseTools.database = {'words':{'My first word':15},'sentences':{'This is a new test sentence':0},
+			  'statistics':{'avg_lower':12, 'avg_start_upper':5, 
+			  'avg_upper':15, 'avg_num':10}}
 input(DatabaseTools.database)
 x.user_menu()
 x.save_database()
