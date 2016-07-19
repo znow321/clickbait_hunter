@@ -91,7 +91,7 @@ class DatabaseTools:
 
 
 	def sql_update_or_input(self, tables_info):  #  Ugly method, needs refactoring...
-		#self.remove_queue()  # DEBUG
+		self.remove_queue()  # DEBUG
 		for table in tables_info:
 			for current_row_name, new_value in DatabaseTools.database[table[0].lower()].items():
 				if self.item_exists(table[0], table[1], current_row_name):
@@ -101,7 +101,7 @@ class DatabaseTools:
 					self.sql_insert(table[0], current_row_name, new_value)  #  Insert
 
 
-	def item_exists(self, table, column, column_value):
+	def item_exists(self, table, column, column_value):  #  Works fine
 		template = 'SELECT {COLUMN} FROM {TABLE} WHERE {COLUMN} = ?'
 		command = sub('{COLUMN}', column, template)
 		command = sub('{TABLE}', table, command)
@@ -109,9 +109,12 @@ class DatabaseTools:
 		return len(self.db_cursor.fetchall()) > 0
 
 
-	def remove_queue(self): 
-		for current, legacy in zip(DatabaseTools.database, self.db_copy):
-			pass
+	def remove_queue(self):  #  Have to config this not sure what is wrong here.... 
+		print(DatabaseTools.database)
+		print(self.db_copy)
+#		for current, legacy in zip(DatabaseTools.database, self.db_copy):
+#			print("current value: %s" % (str(current)))
+#			input("Legacy value: %s" % (str(legacy)))
 
 
 	def item_remove_command(self, table, column):  #  Remove non-existent values
