@@ -72,7 +72,6 @@ class DatabaseTools:
 	def sql_insert(self, table, val1, val2):
 		command = "INSERT INTO {TABLE}"\
 				  " VALUES( '{val1}', {val2})".format(TABLE=table, val1=val1, val2=val2)
-		input(command)
 		self.db_cursor.execute(command)
 		self.db_conn.commit()
 
@@ -82,7 +81,6 @@ class DatabaseTools:
 				   "{CURRENT_ROW}".format(TALBE=table, VALUE=column_to_update,
 				   			  NEW_VALUE=new_value, KEY=comparison_column,
 				  			  CURRENT_ROW=current_row)
-		input(command)
 		self.db_cursor.execute(command)
 		self.db_conn.commit()
 
@@ -136,7 +134,6 @@ class DatabaseTools:
 			self.db_cursor.execute("CREATE TABLE IF NOT EXISTS %s" % (table))
 
 	def save_database(self):
-		del DatabaseTools.database['statistics']['avg_upper']
 		self.db_conn = sqlite3.connect(self.save_dir)
 		self.db_cursor = self.db_conn.cursor()
 		#  ( Table_name, comparison_column, new_value )
@@ -262,6 +259,5 @@ x.load_database()
 DatabaseTools.database = {'words':{'My first word':15},'sentences':{'This is a new test sentence':0},
 			  'statistics':{'avg_lower':12, 'avg_start_upper':5, 
 			  'avg_upper':15, 'avg_num':10}}
-input(DatabaseTools.database)
 x.user_menu()
 x.save_database()
