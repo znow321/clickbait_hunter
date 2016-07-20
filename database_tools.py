@@ -22,7 +22,7 @@ class DatabaseTools:
 		return wrapper
 
 	@db_connect
-	def load_database(self):
+	def load_db(self):
 		if self.__database_exists():
 			self.db_cursor.execute("SELECT word, clickbait_index FROM Words")
 			for word, clickbait_index in self.db_cursor.fetchall():
@@ -117,5 +117,3 @@ class DatabaseTools:
 
 		self.sql_create_tables(tables)
 		self.update_all(tables_info)
-
-
