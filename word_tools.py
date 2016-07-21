@@ -1,19 +1,24 @@
-class WordTools:
-	def decrease_check(self, word):
-		in_database = word in DatabaseTools.database['words']
-		can_subtract = DatabaseTools.database['words'][word] >= 1
-		return in_database and can_subtract
-
-	def increase_weight(self):
-		for word in self.sentence:
-			if word in DatabaseTools.database['words']:
-				DatabaseTools.database['words'][word] += 1
-			else:
-				DatabaseTools.database['words'][word] = 1
-
-	def decrease_weight(self):
-		for word in self.sentence:
-			if self.decrease_check(word):
-				DatabaseTools.database['words'][word] -= 1
+def increase_weight(sentence):
+	for word in sentence:
+		if in_database(word):
+			DatabaseTools.database['words'][word] += 1
+		else:
+			DatabaseTools.database['words'][word] = 1
 
 
+def decrease_weight(sentence):
+	for word in sentence:
+		if decrease_check(word):
+			DatabaseTools.database['words'][word] -= 1
+
+
+def decrease_check(word):
+	return in_database(word) and can_subtract(word)
+
+
+def in_database(word):
+	return word in DatabaseTools.database['words']
+
+
+def can_substract(word):
+	return DatabaseTools.database['words'][word] >= 1
