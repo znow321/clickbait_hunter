@@ -3,9 +3,6 @@ from glob import glob
 from utils import get_save_dir, database_exists
 
 
-#  Name column = "item", Value column = "value"
-
-
 class database:
     tables = ('Words', 'Sentences', 'Statistics')
 
@@ -31,39 +28,30 @@ class database:
         return database.db_cursor.fetchall()
 
 
-def update_all(tables_info):  #  Ugly method, needs refactoring...
+def update_all():  
     remove_queue()
     for table in database.tables:
-        pass
-        for current_row_name, new_value in database.database[table].items():
-            if item_exists(table, current_row_name):
-                if not 
-
-
-    # MAINTENANCE -------------------------------------------------- 
-	remove_queue(tables_info)
-	for table, values in tables_info.items():
-		column = values[0]
-		update_column = values[1]
-		for current_row_name, new_value in DatabaseTools.database[table.lower()].items():
-			if item_exists(table, column, current_row_name):
-				if not is_value_current(table, update_column, column, new_value, current_row_name):
-					sql_update(table, update_column, column, new_value, current_row_name)  #  Update
-			else:
-				sql_insert(table, current_row_name, new_value)  #  Insert
+        for item, value in database.database[table].items():
+            if item_exists(table, item):
+                if not is_value_current(table, item, value): 
+                    sql_update(table, item, value)
+            else:
+                sql_insert(table, item, value )
 
 
 def remove_queue():  #  Have to config this not sure what is wrong here....
 	for table, values in database.db_legacy:
-		for item, value in values.items():
-			if not name in database.database[table]:
-                    item_remove(table, item_name)
+	    for item, value in values.items():
+		    if not name in database.database[table]:
+                sql_remove(table, item)
 
 
-def save_database(self):
+def save_database():
 	#  ( Table_name, comparison_column, new_value )
+    database.connect()
 	sql_create_tables()
-	update_all(tables_info)
+	update_all()
+    database.disconnect()
 
 
 def gen_tables():
@@ -94,27 +82,22 @@ def sql_insert(table, item, value):
     database.execute(command)
 
 
-def sql_update(table, new_value, current_row):
-	command = "UPDATE {table} SET value = {new_value} WHERE item ="\
-               "{current_row}".format(talbe=table, 
-                                      new_value=new_value, 
-                                      current_row=current_row)
+def sql_update(table, item , value):
+	command = "UPDATE {table} SET value = {value} WHERE item ="\
+               "{item}".format(talbe=table, value=value, item=item)
     database.execute(command)
 
 
-def sql_remove(table, item_name):  #  Remove non-existent values
-	command = 'DELETE FROM {TABLE} WHERE' \
-              ' item = "{ITEM_NAME}"'.format(TABLE=table, 
-                                             ITEM_NAME=item_name)
+def sql_remove(table, item):  #  Remove non-existent values
+	command = 'DELETE FROM {table} WHERE' \
+              ' item = "{item}"'.format(table=table,item=item)
     database.execute(command)
 
 
-def is_value_current(table, new_value, cur_row_name):
+def is_value_current(table, item, value):
 	command = 'SELECT item FROM {table} '\
-		      'WHERE value = {new_value} AND'\
-		      'item = "{cur_row_name}"'.format( table=table, 
-                                                new_value=new_value, 
-                                                cur_row_name=cur_row_name)
+		      'WHERE value = {value} AND'\
+		      'item = "{item}"'.format(table=table, item=item, value=value)
     database.execute(command)
 	return len(database.fetch()) > 0
 
@@ -126,4 +109,9 @@ def item_exists(table, item):  #  Works fine
     database.execute(command)
 	return len(database.fetch()) > 0
 
+database.database={'Words':{'Hello':10, 'Xd':100}, 'Sentences':{'Will it
+work?':1}, 'Statistics':{'avg_lower':10, 
+                         'avg_start_upper':3, 
+                         'avg_upper':2, 'avg_num':9}}}
 
+save_database()
