@@ -1,7 +1,8 @@
 from re import findall
+from statistics import mean  #  Will be implemented later
 
 
-class LogicTools:
+class LogicTools:  #  No longer needed, everything moved to functions
 	#  If the sentence is flagged as clickbait
 	def identify(self):
 		pass

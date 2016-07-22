@@ -1,16 +1,17 @@
-from re import findall
-from statistics import mean  #  Will be implemented later
 from database_tools import DatabaseTools
 from word_tools import WordTools
 from sentence_tools import SentenceTools
-from utils import *
 from logic_tools import LogicTools
+from utils import *
 
 
 init_save_dir()
 
+# WARNING
+# Everything moved to functions, inheritance no longer needed! To refactor later 
+# WARNING
 
-class ClickbaitIdentifierUI(LogicTools, WordTools, DatabaseTools, SentenceTools):
+class ClickbaitIdentifierUI("""NOT REALLY SURE WHAT TO PUT HERE"""):
 	def __init__(self, sentence):
 		self.sentence = sentence
 
