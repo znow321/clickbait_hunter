@@ -50,12 +50,23 @@ def remove_queue():  #  Have to config this not sure what is wrong here....
                 sql_remove(table, item)
 
 
-def save_database():
+def db_save():
     #  ( Table_name, comparison_column, new_value )
     db_connect()
     sql_create_tables()
     update_all()
     db_disconnect()
+
+
+def db_load():
+    if database_exists():
+        db_connect()
+        for table in database.tables: 
+            db_execute("SELECT item, value FROM %s" % (table))                                   
+            for item, value in db_fetch():
+                database.database[table][item] = value
+        db_disconnect()
+    database.db_legacy = database.database
 
 
 def gen_tables():
@@ -68,17 +79,6 @@ def sql_create_tables():
     tables = list(gen_tables())
     for table in tables:
         db_execute("CREATE TABLE IF NOT EXISTS %s" % (table))
-
-
-def load_db():
-    db_connect()
-    if database_exists():
-        for table in database.tables: 
-            db_execute("SELECT item, value FROM %s" % (table))                                   
-            for item, value in db_fetch():
-                database.database[table][item] = value
-    database.db_legacy = database.database
-    db_disconnect()
 
 
 #  Direct insertion of new 'profiles', no further steps needed
