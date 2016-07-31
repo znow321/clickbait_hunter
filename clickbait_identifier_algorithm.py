@@ -1,15 +1,12 @@
 from database_tools import DatabaseTools
-from word_tools import WordTools
-from sentence_tools import SentenceTools
-from logic_tools import LogicTools
+from word_tools # Will do later
+from sentence_tools # Will do later
+from logic_tools # Will do later
 from utils import *
 
 
 init_save_dir()
 
-# WARNING
-# Everything moved to functions, inheritance no longer needed! To refactor later 
-# WARNING
 
 class ClickbaitIdentifierUI("""NOT REALLY SURE WHAT TO PUT HERE"""):
 	def __init__(self, sentence):

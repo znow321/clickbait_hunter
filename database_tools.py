@@ -42,16 +42,14 @@ def update_all():
                     sql_insert(table, item, value )
 
 
-def remove_queue():  #  Have to config this not sure what is wrong here....
-#    database.database['Sentences'] = {}
+def remove_queue():  
     for table, values in database.db_legacy.items():
         for item, value in values.items():
             if not item in database.database[table]:
                 sql_remove(table, item)
 
 
-def db_save():
-    #  ( Table_name, comparison_column, new_value )
+def db_save(): # INTERFACE FUNCTION
     db_connect()
     sql_create_tables()
     update_all()
