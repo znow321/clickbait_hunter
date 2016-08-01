@@ -2,17 +2,6 @@ import sqlite3
 from utils import get_save_dir, database_exists
 
 
-class database:
-    tables = ('Words', 'Sentences', 'Statistics')
-
-    database = {'Words':{},'Sentences':{},
-                'Statistics':{'avg_lower':0, 
-                'avg_start_upper':0, 
-                'avg_upper':0, 'avg_num':0}}
-
-    db_legacy = {}  #  Original copy for db item removal
-
-
 def db_connect():
     database.db_conn = sqlite3.connect(get_save_dir())
     database.db_cursor = database.db_conn.cursor()
@@ -56,7 +45,7 @@ def db_save(): # INTERFACE FUNCTION
     db_disconnect()
 
 
-def db_load():
+def db_load(): # SECOND INTERFACE FUNCTION
     if database_exists():
         db_connect()
         for table in database.tables: 
