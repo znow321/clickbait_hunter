@@ -23,6 +23,3 @@ def can_automerge(clickbait_status):
 	in_database = in_database(sentence, clickbait_status)
 	in_conflict = in_conflict(sentence, clickbait_status)
 	return in_database and not in conflict
-
-
-resolve_conflicts(False)

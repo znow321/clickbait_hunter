@@ -1,8 +1,7 @@
-from database_tools import db_save, db_load
-from word_tools import increase_weight, decrease_weight
-from sentence_tools import
-from logic_tools import identify
-from utils import *
+from utils import init_save_dir
+
+
+# Most of other modules won't work without the database class
 
 
 init_save_dir()
@@ -18,6 +17,6 @@ class database: # Universal data storage function
     db_legacy = {}  #  Original copy for db item removal
 
 
-def start_identifier(sentence): # THIS IS THE ABSOLUTELY FIRST FUNCTION YOU SHOULD CALL
+def start_identifier(sentence): # THIS IS THE ABSOLUTELY FIRST FUNCTION TO CALL 
     database.sentence = sentence
     route()
