@@ -1,4 +1,5 @@
 from conflict_resolver import resolve_conflicts
+from database import database
 
 
 def update_sentence_db():

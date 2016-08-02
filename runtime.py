@@ -17,7 +17,3 @@ init_save_dir()
 def start_identifier(sentence): # THIS IS THE ABSOLUTELY FIRST FUNCTION TO CALL 
     database.sentence = sentence
     route()
-
-
-start_identifier("Hello this is madness!")
-input("Exiting")

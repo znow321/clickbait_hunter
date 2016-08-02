@@ -1,13 +1,7 @@
+from sentence_tools import update_sentence_db 
 from re import findall
 from statistics import mean  #  Will be implemented later
-
-
-def analyze():  # AFTER IDENTIFYING
-    percentages = percentages()
-
-
-def identify(): # If the user is not sure
-    pass
+from database import database
 
 
 def report_gen():
@@ -21,13 +15,11 @@ def report_gen():
 
 
 def report_len():
-    sentence = database.sentence
     stats = list(report_gen())
     return [len(word_type) for word_type in stats]
 
 
-def percentages(): # GLOBAL AVERAGES
-    sentence = database.sentence
+def percentages(sentence = database.sentence): # For both global & current 
     report = report_len()
     percent_per_word = 100 / report[0]
     for word_type in report[1:]:
