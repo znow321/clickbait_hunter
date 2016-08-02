@@ -1,25 +1,33 @@
 from conflict_resolver import resolve_conflicts
 
 
-def update_sentence_database(clickbait_status=True):
+def update_sentence_db():
     sentence = database.sentence
+    clb_status = database.clb_status
+
 	if not can_automerge():
-		clickbait_status = resolve_conflicts(clickbait_status)
-		database.database['Sentences'][sentence] = clickbait_status
+		clb_status = resolve_conflicts(clb_status)
+		database.database['Sentences'][sentence] = clb_status
     
 
-def in_database(clickbait_status):
+def in_database():
+    clb_status = database.clb_status
     sentence = database.sentence
+
 	return sentence in database.database['Sentences']
 
 
-def in_conflict(clickbait_status):
+def in_conflict():
+    clb_status = database.clb_status
     sentence = database.sentence
-	return database.database['Sentences'][sentence] != clickbait_status
+
+	return database.database['Sentences'][sentence] != clb_status
 
 
-def can_automerge(clickbait_status):
+def can_automerge():
     sentence = database.sentence
-	in_database = in_database(sentence, clickbait_status)
-	in_conflict = in_conflict(sentence, clickbait_status)
+    clb_status = database.clb_status
+
+	in_database = in_database(sentence, clb_status)
+	in_conflict = in_conflict(sentence, clb_status)
 	return in_database and not in conflict

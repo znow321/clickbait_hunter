@@ -2,8 +2,8 @@ from re import findall
 from statistics import mean  #  Will be implemented later
 
 
-def analyze():  # If flagged as clickbait
-    pass
+def analyze():  # AFTER IDENTIFYING
+    percentages = percentages()
 
 
 def identify(): # If the user is not sure
