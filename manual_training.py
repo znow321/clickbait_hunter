@@ -1,9 +1,9 @@
 from database_tools import db_save, db_load
-from word_tools import increase_weight, decrease_weight
-# from sentence_tools import
-from logic_tools import identify
+# from logic_tools import identify
 from utils import *
 from database import database
+from analysis import analyze
+
 
 
 def get_choice(): 
@@ -26,10 +26,13 @@ def get_choice():
 def route():
     choice = get_choice()
     if choice == 1:
+        database.clb_status = True
         analyze()
     elif choice == 2:
-        decrease_weight()
+        database.clb_status = False
+        analyze()
     elif choice == 3:
-        identify()
+        pass
+        # identify()
     else:
         raise ValueError('Illegal value "%s" recieved!' % (choice))
