@@ -21,17 +21,6 @@ def db_fetch():
     return database.db_cursor.fetchall()
 
 
-def update_all():  
-    remove_queue()
-    for table in database.tables:
-            for item, value in database.database[table].items():
-                if item_exists(table, item):
-                    if not is_value_current(table, item, value): 
-                        sql_update(table, item, value)
-                else:
-                    sql_insert(table, item, value )
-
-
 def remove_queue():  
     for table, values in database.db_legacy.items():
         for item, value in values.items():
@@ -42,19 +31,44 @@ def remove_queue():
 def db_save(): # INTERFACE FUNCTION
     db_connect()
     sql_create_tables()
-    update_all()
+    remove_queue()
+    bool_convertor("bool_to_binary")
+    for table in database.tables:
+            for item, value in database.database[table].items():
+                if item_exists(table, item):
+                    if not is_value_current(table, item, value): 
+                        sql_update(table, item, value)
+                else:
+                    sql_insert(table, item, value )
     db_disconnect()
 
 
 def db_load(): # SECOND INTERFACE FUNCTION
     if database_exists():
         db_connect()
+        bool_convertor("binary_to_bool")
         for table in database.tables: 
             db_execute("SELECT item, value FROM %s" % (table))                                   
             for item, value in db_fetch():
                 database.database[table][item] = value
         db_disconnect()
     database.db_legacy = database.database
+
+
+def bool_convertor(mode):
+    sentences_temp = database.database['Sentences']
+    if mode == "bool_to_binary":
+        for key, value in sentences_temp.items(): 
+            if value == True:
+                database.database['Sentences'][key] = 1
+            else:
+                database.database['Sentences'][key] = 0
+    elif mode == "binary_to_bool":
+        for key, value in sentences_temp.items(): 
+            if value == 1:
+                database.database['Sentences'][key] = True
+            elif value == 0:
+                database.database['Sentences'][key] = False
 
 
 def gen_tables():
