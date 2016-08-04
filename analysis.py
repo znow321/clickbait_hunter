@@ -21,5 +21,6 @@ def update_statistics_db():
     for value, item in zip(wordcount, stat_names): 
         database.database['Statistics'][item] += value 
 
+
 def global_stat_names():
     return [key for key, value in database.database['Statistics'].items()]

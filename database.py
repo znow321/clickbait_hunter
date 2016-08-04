@@ -1,7 +1,7 @@
 class database: # Universal data storage function
     sentence = ''
     clb_status = False
-    tables = ('Words', 'Sentences', 'Statistics', 'Stat_aux')
+    tables = ('Words', 'Sentences', 'Statistics')
 
     database = {'Words':{},'Sentences':{},
                 'Statistics':{'num_lower':0, # Total number of analyzed specimens needed for statistical analysis

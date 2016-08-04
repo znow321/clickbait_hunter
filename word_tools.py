@@ -2,7 +2,7 @@ from database import database
 
 
 def increase_weight():
-    sentence  = database.sentence 
+    sentence  = sentence_split()
     for word in sentence:
         if in_database(word):
             database.database['Words'][word] += 1
@@ -11,10 +11,14 @@ def increase_weight():
 
 
 def decrease_weight():
-    sentence  = database.sentence 
+    sentence = sentence_split()
     for word in sentence:
         if decrease_check(word):
             database.database['Words'][word] -= 1
+
+
+def sentence_split():
+    return database.sentence.split()
 
 
 def decrease_check(word):
