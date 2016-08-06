@@ -28,7 +28,7 @@ def get_save_dir():
 def init_save_dir():
 	if not path.exists('clickbait_database'):
 		makedirs('clickbait_database')
-		create_gitignore = open(join('clickbait_database','.gitignore'), 'w')
+		create_gitignore = open(join('clickbait_database','.gitignore'), 'w'). # A path.join should be here!
 		create_gitignore.write('*\n!.gitignore')
 		create_gitignore.close()
 
