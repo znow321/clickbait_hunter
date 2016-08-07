@@ -4,6 +4,9 @@ from re import findall
 from database import database
 
 
+# Only for temporary calculations
+
+
 def report_gen():
     # [ lowercase, upper_start, upper, number]  
     sentence = database.sentence
@@ -25,3 +28,11 @@ def update_statistics_db():
     database.database['statistics']['num_upper_start'] = wordcount[1]
     database.database['statistics']['num_upper'] = wordcount[2]
     database.database['statistics']['num_int'] = wordcount[3]
+
+
+def global_avg_ratio():
+    pass
+
+
+def global_avg_weight():
+    pass

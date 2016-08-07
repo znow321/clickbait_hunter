@@ -6,7 +6,7 @@ from word_tools import increase_weight, decrease_weight
 
 def analyze():  # AFTER IDENTIFYING
     clb_status = database.clb_status
-    if clb_status:  # Occurence count ('statistics')
+    if clb_status:  
         update_statistics_db()
         increase_weight() # Word update('words')
     else:
