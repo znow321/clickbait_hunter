@@ -7,12 +7,27 @@ from database import database
 # Only for temporary calculations
 
 
-def report_gen():
-    # [ lowercase, upper_start, upper, number]  
-    sentence = database.sentence
-    templates = (r'\b[a-z\']+\b',r'\b[A-Z][a-z\']+\b',r'\b[A-Z\']+\b',r'\b[0-9]+\b')
-    for template in templates:
-        yield len(findall(template, sentence))
+def lower(sentence = database.sentence):
+    return len(findall(r'\b[a-z\']+\b', sentence))
+
+
+def upper_start(sentence = database.sentence):
+    return len(findall(r'\b[A-Z][a-z\']+\b', sentence))
+    
+
+def upper(sentence = database.sentence):
+    return len(findall(r'\b[A-Z\']+\b',sentence))
+
+
+def number(sentence = database.sentence):
+    return len(findall(r'\b[0-9]+\b',sentence))
+
+
+def update_statistics_db():
+    database.database['statistics']['num_lower'] = lower()
+    database.database['statistics']['num_upper_start'] = upper_start()
+    database.database['statistics']['num_upper'] = upper()
+    database.database['statistics']['num_int'] = number()
 
 
 def percentages(sentence = database.sentence): # For both global & current 
@@ -22,16 +37,13 @@ def percentages(sentence = database.sentence): # For both global & current
         yield word_type * percent_per_word
 
 
-def update_statistics_db():
-    wordcount = list(report_gen()) 
-    database.database['statistics']['num_lower'] = wordcount[0]
-    database.database['statistics']['num_upper_start'] = wordcount[1]
-    database.database['statistics']['num_upper'] = wordcount[2]
-    database.database['statistics']['num_int'] = wordcount[3]
-
-
 def global_avg_ratio():
-    pass
+    global_stats = [ 0, 0, 0, 0 ]
+    for sentence, clb_status in database.database['sentences'].items():
+       global_stats[0] += lower(sentence)
+       global_stats[1] += upper_start(sentence)
+       global_stats[2] += upper(sentence)
+       global_stats[3] += number(sentence)
 
 
 def global_avg_weight():
