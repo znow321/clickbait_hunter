@@ -56,19 +56,19 @@ def db_load(): # SECOND INTERFACE FUNCTION
 
 
 def bool_convertor(mode):
-    sentences_temp = database.database['Sentences']
+    sentences_temp = database.database['sentences']
     if mode == "bool_to_binary":
         for key, value in sentences_temp.items(): 
             if value == True:
-                database.database['Sentences'][key] = 1
+                database.database['sentences'][key] = 1
             else:
-                database.database['Sentences'][key] = 0
+                database.database['sentences'][key] = 0
     elif mode == "binary_to_bool":
         for key, value in sentences_temp.items(): 
             if value == 1:
-                database.database['Sentences'][key] = True
+                database.database['sentences'][key] = True
             elif value == 0:
-                database.database['Sentences'][key] = False
+                database.database['sentences'][key] = False
 
 
 def gen_tables():

@@ -7,4 +7,4 @@ def identify(): # If the user is not sure
 
 
 def get_global_vals():
-    return [value for key, value in database.database['Statistics'].items()]
+    return [value for key, value in database.database['statistics'].items()]
