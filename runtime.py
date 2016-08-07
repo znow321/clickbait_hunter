@@ -24,6 +24,6 @@ database.sentence = "This is a very important test"
 database.clb_status = True
 analyze()
 input(database.__dict__)
-# db_save()
+db_save()
 
 # DEBUG
