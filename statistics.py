@@ -38,13 +38,17 @@ def percentages(sentence = database.sentence): # For both global & current
 
 
 def global_avg_ratio():
-    global_stats = [ 0, 0, 0, 0 ]
+    global_ratio = [ 0, 0, 0, 0 ]
     for sentence, clb_status in database.database['sentences'].items():
        global_stats[0] += lower(sentence)
        global_stats[1] += upper_start(sentence)
        global_stats[2] += upper(sentence)
        global_stats[3] += number(sentence)
+    return global_ratio
 
 
 def global_avg_weight():
-    pass
+    global_weight = 0
+    for sentence, clb_status in database.database['sentences'].items():
+        for word in sentence.split():
+            pass
