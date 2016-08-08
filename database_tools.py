@@ -46,11 +46,11 @@ def db_save(): # INTERFACE FUNCTION
 def db_load(): # SECOND INTERFACE FUNCTION
     if database_exists():
         db_connect()
-        bool_convertor("binary_to_bool")
         for table in database.tables: 
             db_execute("SELECT item, value FROM %s" % (table))                                   
             for item, value in db_fetch():
                 database.database[table][item] = value
+        bool_convertor("binary_to_bool")
         db_disconnect()
     database.db_legacy = database.database
 
