@@ -1,5 +1,4 @@
-from database import database
-from utils import cls, error
+from utils import database, cls
 
 
 def update_sentence_db():

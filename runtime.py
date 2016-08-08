@@ -1,8 +1,8 @@
-from manual_training import route 
 from utils import init_save_dir
-from database import database
-from database_tools import db_save, db_load
+from database_tools import db_load, db_save
 from re import sub
+from utils import database
+from manual_training import route
 
 
 init_save_dir()

@@ -1,6 +1,6 @@
+from utils import database_exists, get_save_dir
 import sqlite3
-from utils import get_save_dir, database_exists
-from database import database
+from utils import database
 
 
 def db_connect():

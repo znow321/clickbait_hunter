@@ -1,4 +1,4 @@
-from database import database
+from utils import database
 
 
 def increase_weight():

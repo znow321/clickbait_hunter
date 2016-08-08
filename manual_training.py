@@ -1,8 +1,6 @@
-from database_tools import db_save, db_load
-# from logic_tools import identify
-from utils import *
-from database import database
-from analysis import analyze
+from utils import cls
+from misc_tools import analyze
+from utils import database
 
 
 def get_choice(): 

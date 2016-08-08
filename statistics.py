@@ -1,7 +1,3 @@
-from sentence_tools import update_sentence_db 
-from re import findall
-# from statistics import mean  #  Will be implemented later
-from database import database
 
 
 # [lower, upper_start, upper, num]
