@@ -31,6 +31,7 @@ def percentages(sentence = database.sentence): # For both global & current
 
 
 def cur_ratio():
+    sentence = database.sentence
     cur_ratio = [ 0, 0, 0, 0 ]
     cur_ratio[0] = lower(sentence)
     cur_ratio[1] = upper_start(sentence)
@@ -49,7 +50,11 @@ def global_avg_ratio():
     return global_ratio
 
 
-def cur_weight
+def cur_weight():
+    weight = 0
+    for word in database.sentence.split():
+       weight += database.database['words'][word]
+    return weight
 
 
 def global_avg_weight():
