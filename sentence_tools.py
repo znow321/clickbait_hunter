@@ -61,3 +61,7 @@ def get_question(): # OK
     ' from %s to %s?\n(Y/N)' % (sentence, status[0], status[1])
     
     return sentence
+
+
+
+###

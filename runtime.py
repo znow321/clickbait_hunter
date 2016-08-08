@@ -19,4 +19,4 @@ def start_identifier(sentence): # THIS IS THE ABSOLUTELY FIRST FUNCTION TO CALL
     db_save()
 
 
-start_identifier("Hello there.")
+#start_identifier("Hello there.")
