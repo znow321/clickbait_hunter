@@ -5,10 +5,6 @@ from database_tools import db_save, db_load
 from re import sub
 
 
-# Most of other modules won't work without the database class
-# It looks like the static database class method variables are shared between classes regardless where they are imported.
-
-
 init_save_dir()
 
 

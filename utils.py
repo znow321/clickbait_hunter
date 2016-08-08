@@ -1,4 +1,8 @@
 from glob import glob
+from database import database
+from sentence_tools import update_sentence_db
+from word_tools import increase_weight, decrease_weight
+from statistics import percentages
 from os import system, path, makedirs
 from time import sleep
 import platform
@@ -35,3 +39,28 @@ def init_save_dir():
 
 def database_exists():
 	return glob(get_save_dir())
+
+
+class database: # Universal data storage function
+    sentence = ''
+    clb_status = None
+    tables = ('words', 'sentences')
+    database = {'words':{},'sentences':{}}
+    db_legacy = {}  #  Original copy for db item removal
+
+
+def identify(): # If the user is not sure
+    wordcount_percentage = percentages()
+    global_percentage = percentages()
+
+
+
+
+def analyze():  # AFTER IDENTIFYING
+    clb_status = database.clb_status
+    if clb_status:  
+        increase_weight() # Word update('words')
+    else:
+        decrease_weight()  # Word update('words')
+
+    update_sentence_db()  # Sentence update('sentences') 
