@@ -5,7 +5,6 @@ from database import database
 from analysis import analyze
 
 
-
 def get_choice(): 
     while True:
         cls()

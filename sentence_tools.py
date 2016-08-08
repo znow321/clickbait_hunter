@@ -3,10 +3,8 @@ from database import database
 
 def update_sentence_db():
     sentence = database.sentence
-    input("Clb status: %s" % (str(database.clb_status)))
     if not can_automerge():
         resolve_conflicts()
-    input("Clb status: %s" % (str(database.clb_status)))
     database.database['sentences'][sentence] = database.clb_status
 
 
@@ -19,7 +17,10 @@ def in_database():
 def in_conflict():
     clb_status = database.clb_status
     sentence = database.sentence
-    return database.database['sentences'][sentence] != clb_status
+    if clb_status != None:
+        return database.database['sentences'][sentence] != clb_status
+    else:
+        return False
 
 
 def can_automerge():

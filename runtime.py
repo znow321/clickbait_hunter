@@ -16,7 +16,6 @@ def start_identifier(sentence): # THIS IS THE ABSOLUTELY FIRST FUNCTION TO CALL
     db_load()
     database.sentence = sub(r'[^A-Za-z0-9 ]', '', sentence)
     route()
-    input(database.__dict__)
     db_save()
 
 
