@@ -1,29 +1,30 @@
+from utils import database
+from re import findall
 
 
 # [lower, upper_start, upper, num]
 
 
-def lower():
+def lower(sentence):
     return len(findall(r'\b[a-z\']+\b', sentence))
 
 
-def upper_start():
+def upper_start(sentence):
     return len(findall(r'\b[A-Z][a-z\']+\b', sentence))
     
 
-def upper():
+def upper(sentence):
     return len(findall(r'\b[A-Z\']+\b',sentence))
 
 
-def number():
+def number(sentence):
     return len(findall(r'\b[0-9]+\b',sentence))
 
 
-def percentages(): # For both global & current 
-    report = report_len()
-    percent_per_word = 100 / report[0]
-    for word_type in report[1:]:
-        yield word_type * percent_per_word
+def percentages(report): # For both global & current 
+    percent_per_word = 100 / sum(report)
+    for word_type in report:
+        yield round(word_type * percent_per_word, 3)
 
 
 def cur_ratio():
@@ -33,6 +34,7 @@ def cur_ratio():
     cur_ratio[1] = upper_start(sentence)
     cur_ratio[2] = upper(sentence)
     cur_ratio[3] = number(sentence)
+    cur_ratio = list(percentages(cur_ratio))
     return cur_ratio
 
 
@@ -43,6 +45,7 @@ def global_avg_ratio():
        global_ratio[1] += upper_start(sentence)
        global_ratio[2] += upper(sentence)
        global_ratio[3] += number(sentence)
+    global_ratio = list(percentages(global_ratio))
     return global_ratio
 
 
@@ -60,4 +63,17 @@ def global_avg_weight():
         for word in sentence.split():
            cur_weight += database.database['words'][word] 
         weight_list.append(cur_weight)
-    return sum(weight_list) / len(weight_list)
+    return round(sum(weight_list) / len(weight_list), 3)
+
+def debug():
+    print(database.database['sentences'])
+    print(database.database['words'])
+    print(database.sentence)
+    print('Current ratio: ', end='')
+    print(cur_ratio())
+    print('Global average ratio: ', end='')
+    print(global_avg_ratio())
+    print('Current weight: ', end='')
+    print(cur_weight())
+    print('Global average weight: ', end='')
+    input(global_avg_weight())
