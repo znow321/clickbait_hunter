@@ -6,7 +6,7 @@ def update_sentence_db():
     sentence = database.sentence
     if in_conflict():
         resolve_conflicts()
-    database.database['sentences'][sentence] = database.clb_status
+    database.database['sentences'][sentence] = database.clb_status # Overwrites the database entry
     cls()
 
 
