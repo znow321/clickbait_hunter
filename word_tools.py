@@ -15,6 +15,8 @@ def decrease_weight():
     for word in sentence:
         if decrease_check(word):
             database.database['words'][word] -= 1
+        else:
+            database.database['words'][word] = 0
 
 
 def sentence_split():
@@ -29,5 +31,5 @@ def in_database(word):
     return word in database.database['words']
 
 
-def can_substract(word):
+def can_subtract(word):
     return database.database['words'][word] >= 1

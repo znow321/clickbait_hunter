@@ -7,23 +7,23 @@ from database import database
 # [lower, upper_start, upper, num]
 
 
-def lower(sentence = database.sentence):
+def lower():
     return len(findall(r'\b[a-z\']+\b', sentence))
 
 
-def upper_start(sentence = database.sentence):
+def upper_start():
     return len(findall(r'\b[A-Z][a-z\']+\b', sentence))
     
 
-def upper(sentence = database.sentence):
+def upper():
     return len(findall(r'\b[A-Z\']+\b',sentence))
 
 
-def number(sentence = database.sentence):
+def number():
     return len(findall(r'\b[0-9]+\b',sentence))
 
 
-def percentages(sentence = database.sentence): # For both global & current 
+def percentages(): # For both global & current 
     report = report_len()
     percent_per_word = 100 / report[0]
     for word_type in report[1:]:

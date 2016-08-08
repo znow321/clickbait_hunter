@@ -3,10 +3,11 @@ from database import database
 
 def update_sentence_db():
     sentence = database.sentence
-    clb_status = database.clb_status
-    if can_automerge(): # TESTING HERE, POSSIBLE SEMANTIC ERROR
-        clb_status = resolve_conflicts()
-    database.database['sentences'][sentence] = clb_status
+    input("Clb status: %s" % (str(database.clb_status)))
+    if not can_automerge():
+        resolve_conflicts()
+    input("Clb status: %s" % (str(database.clb_status)))
+    database.database['sentences'][sentence] = database.clb_status
 
 
 def in_database():
@@ -31,9 +32,9 @@ def resolve_conflicts():  #  = conflicting status
     clb_status = database.clb_status
     choice = get_answer()
     if choice == 'y':
-        return not clb_status
+        database.clb_status = not clb_status
     elif choice == 'n':
-        return clb_status
+        pass
 
 
 def get_answer(): # Asking cycle
@@ -47,7 +48,7 @@ def get_answer(): # Asking cycle
             error('Invalid option entered, please try again...', 1)
 
 
-def get_question():
+def get_question(): # OK
     clb_status = database.clb_status
     sentence = database.sentence
     status = ('clickbait', 'non-clickbait')
