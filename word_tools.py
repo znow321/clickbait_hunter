@@ -2,21 +2,24 @@ from utils import database
 
 
 def increase_weight():
-    sentence  = sentence_split()
-    for word in sentence:
-        if in_database(word):
-            database.database['words'][word] += 1
-        else:
-            database.database['words'][word] = 1
+    # Avoiding duplicates
+    if database.sentence not in database.database['sentences']:
+        sentence  = sentence_split()
+        for word in sentence:
+            if in_database(word):
+                database.database['words'][word] += 1
+            else:
+                database.database['words'][word] = 1
 
 
 def decrease_weight():
-    sentence = sentence_split()
-    for word in sentence:
-        if decrease_check(word):
-            database.database['words'][word] -= 1
-        else:
-            database.database['words'][word] = 0
+    if database.sentence not in database.database['sentences']:
+        sentence = sentence_split()
+        for word in sentence:
+            if decrease_check(word):
+                database.database['words'][word] -= 1
+            else:
+                database.database['words'][word] = 0
 
 
 def sentence_split():

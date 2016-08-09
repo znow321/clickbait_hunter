@@ -6,6 +6,7 @@ import platform
 class database: # Universal data storage function
     sentence = ''
     clb_status = None
+    error_tolerance = None
     tables = ('words', 'sentences')
     database = {'words':{},'sentences':{}}
     db_legacy = {}  #  Original copy for db item removal

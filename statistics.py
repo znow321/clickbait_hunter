@@ -24,7 +24,7 @@ def number(sentence):
 def percentages(report): # For both global & current 
     percent_per_word = 100 / sum(report)
     for word_type in report:
-        yield round(word_type * percent_per_word, 3)
+        yield round(word_type * percent_per_word)
 
 
 def cur_ratio():
@@ -63,7 +63,7 @@ def global_avg_weight():
         for word in sentence.split():
            cur_weight += database.database['words'][word] 
         weight_list.append(cur_weight)
-    return round(sum(weight_list) / len(weight_list), 3)
+    return round(sum(weight_list) / len(weight_list))
 
 def debug():
     print(database.database['sentences'])
