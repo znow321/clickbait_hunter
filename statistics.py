@@ -64,16 +64,3 @@ def global_avg_weight():
            cur_weight += database.database['words'][word] 
         weight_list.append(cur_weight)
     return round(sum(weight_list) / len(weight_list))
-
-def debug():
-    print(database.database['sentences'])
-    print(database.database['words'])
-    print(database.sentence)
-    print('Current ratio: ', end='')
-    print(cur_ratio())
-    print('Global average ratio: ', end='')
-    print(global_avg_ratio())
-    print('Current weight: ', end='')
-    print(cur_weight())
-    print('Global average weight: ', end='')
-    input(global_avg_weight())

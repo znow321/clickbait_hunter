@@ -1,6 +1,6 @@
 from utils import cls
-from misc_tools import analyze
-from utils import database
+from misc_tools import analyze, identify
+from utils import database, error
 
 
 def get_choice(): 
@@ -29,7 +29,27 @@ def route():
         database.clb_status = False
         analyze()
     elif choice == 3:
-        pass
-        # identify()
+        answer = identify()
+        success = id_answer(answer)
+        if success: 
+            database.clb_status = not database.clb_status
+        analyze()
     else:
         raise ValueError('Illegal value "%s" recieved!' % (choice))
+
+    input(database.__dict__)
+
+
+def id_answer(clb_status):
+    status = 'is' if clb_status else "isn't"
+    sentence = 'The clickbait identifier algorithm thinks the sentence "%s"' \
+                ' %s clickbait, do you agree?\n(Y/N)' % (database.sentence,
+                                                          status)
+    while True:
+        cls()
+        print(sentence)
+        answer = input().lower()
+        if answer not in ['y', 'n']:
+            error('Invalid value entered, please try again...', 1)
+        else:
+            return answer
