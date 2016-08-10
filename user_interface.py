@@ -44,10 +44,17 @@ def route():
 
 
 def user_confirmation(clb_status):
-    status = 'is' if clb_status else "isn't"
-    sentence = 'The clickbait identifier algorithm thinks the sentence "%s"' \
-                ' %s clickbait, do you agree?\n(Y/N)' % (database.sentence,
-                                                          status)
+    sentence = database.sentence
+    if sentence not in database.database['sentences']:
+        status = 'is' if clb_status else "isn't"
+        sentence = 'The clickbait identifier algorithm thinks the sentence "%s"' \
+                    ' %s clickbait, do you agree?\n(Y/N)' % (sentence,
+                                                              status)
+    else:
+        status = 'clickbait' if clb_status else 'non-clickbait'
+        sentence = 'The sentence "%s" was confirmed by you as %s, ' \
+                    'do you still agree?\n(Y/N)' % (sentence, status)
+
     while True:
         cls()
         print(sentence)

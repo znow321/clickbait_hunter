@@ -4,7 +4,6 @@ from utils import database
 from statistics import cur_ratio, global_avg_ratio, cur_weight, global_avg_weight
 
 
-
 def identify(): # Once this returns, user check comes in. 
     cur_rtio = cur_ratio()
     global_avg_rtio = global_avg_ratio()
@@ -21,9 +20,9 @@ def identify(): # Once this returns, user check comes in.
         return sentence_db[sentence]
     else:
         for cur, globl in zip(cur_rtio, global_avg_rtio):
-            if cur_ratio in tolerated_range(globl):
+            if cur_ratio >= tolerated_limit(globl):
                total_score += 12.5 
-        if cur_wght in tolerated_range(global_avg_wght):
+        if cur_wght >= tolerated_limit(global_avg_wght):
             total_score += 50
 
     if total_score < 75:
@@ -32,9 +31,9 @@ def identify(): # Once this returns, user check comes in.
         return True
     
 
-def tolerated_range(value):
+def tolerated_limit(value):
     tolerance = database.error_tolerance
-    return list( range(value - tolerance, value + tolerance))
+    return value - tolerance
 
 
 def analyze():  # AFTER IDENTIFYING
