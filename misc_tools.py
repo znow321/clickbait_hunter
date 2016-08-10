@@ -33,7 +33,7 @@ def identify(): # Once this returns, user check comes in.
     
 
 def tolerated_range(value):
-    tolerance = database.tolerance
+    tolerance = database.error_tolerance
     return list( range(value - tolerance, value + tolerance))
 
 

@@ -30,14 +30,12 @@ def route():
         analyze()
     elif choice == 3:
         answer = identify()
-        success = id_answer(answer)
-        if success: 
-            database.clb_status = not database.clb_status
+        final_answer = id_answer(answer)
+        if final_answer == 'n': 
+            database.clb_status = database.clb_status # Error here?
         analyze()
     else:
         raise ValueError('Illegal value "%s" recieved!' % (choice))
-
-    input(database.__dict__)
 
 
 def id_answer(clb_status):
