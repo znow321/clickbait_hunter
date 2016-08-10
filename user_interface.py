@@ -33,10 +33,11 @@ def route():
             error('Insufficient data for identifying!', 2)
         else:
             answer = identify()
-            input(answer)
             final_answer = user_confirmation(answer)
             if final_answer == 'n': 
-                database.clb_status = answer # Error here?
+                database.clb_status = not answer # Error here?
+            else:
+                database.clb_status = answer
             analyze()
     else:
         raise ValueError('Illegal value "%s" recieved!' % (choice))
