@@ -1,4 +1,4 @@
-from utils import database, cls
+from utils import database, cls, error
 
 
 def update_sentence_db():

@@ -52,7 +52,8 @@ def global_avg_ratio():
 def cur_weight():
     weight = 0
     for word in database.sentence.split():
-       weight += database.database['words'][word]
+       if word in database.database['words']:
+           weight += database.database['words'][word]
     return weight
 
 

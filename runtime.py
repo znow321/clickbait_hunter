@@ -31,4 +31,4 @@ def exit_variable_dump():
     input(database.db_legacy)
 
 
-start_identifier("This is a third ultimate sentence xd.", 1)
+start_identifier("Just soring out some semantic errors.", 1)

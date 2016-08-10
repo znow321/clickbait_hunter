@@ -1,4 +1,4 @@
-from utils import cls
+from utils import cls, sentence_database
 from misc_tools import analyze, identify
 from utils import database, error
 
@@ -29,16 +29,20 @@ def route():
         database.clb_status = False
         analyze()
     elif choice == 3:
-        answer = identify()
-        final_answer = id_answer(answer)
-        if final_answer == 'n': 
-            database.clb_status = database.clb_status # Error here?
-        analyze()
+        if len(sentence_database()) == 0:
+            error('Insufficient data for identifying!', 2)
+        else:
+            answer = identify()
+            input(answer)
+            final_answer = user_confirmation(answer)
+            if final_answer == 'n': 
+                database.clb_status = answer # Error here?
+            analyze()
     else:
         raise ValueError('Illegal value "%s" recieved!' % (choice))
 
 
-def id_answer(clb_status):
+def user_confirmation(clb_status):
     status = 'is' if clb_status else "isn't"
     sentence = 'The clickbait identifier algorithm thinks the sentence "%s"' \
                 ' %s clickbait, do you agree?\n(Y/N)' % (database.sentence,

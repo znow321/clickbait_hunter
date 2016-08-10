@@ -1,6 +1,7 @@
 from os import path, system
 from glob import glob
 import platform
+from time import sleep
 
 
 class database: # Universal data storage function
@@ -43,3 +44,11 @@ def init_save_dir():
 
 def database_exists():
 	return glob(get_save_dir())
+
+
+def word_database():
+    return database.database['words']
+
+
+def sentence_database():
+    return database.database['sentences']
