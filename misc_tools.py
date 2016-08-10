@@ -1,7 +1,8 @@
 from word_tools import increase_weight, decrease_weight
 from sentence_tools import update_sentence_db
 from utils import database
-from statistics import cur_ratio, global_avg_ratio, cur_weight, global_avg_weight
+from statistics import cur_ratio, global_avg_ratio, 
+                        cur_weight, global_avg_weight
 
 
 def identify(): # Once this returns, user check comes in. 
