@@ -3,7 +3,6 @@ from misc_tools import analyze, identify
 from utils import db, error
 
 
-
 def route():
     choice = get_choice()
     if choice == 1:

@@ -29,12 +29,10 @@ def error(message, sleep_time=0):
 	cls()
 
 
-def get_save_dir():
-	return path.join('clickbait_database', 'database.sqlite')
+get_save_dir = lambda: path.join('clickbait_database', 'database.sqlite')
 
 
-def git_dir():
-    return path.join('clickbait_database','.gitignore')
+git_dir = lambda: path.join('clickbait_database','.gitignore')
 
 
 #  Creates save directory with a .gitignore if it's not already there
@@ -45,8 +43,7 @@ def init_save_dir():
             mk_git.write('*\n!.gitignore')
 
 
-def db_exists():
-	return glob(get_save_dir())
+db_exists = lambda: glob(get_save_dir())
 
 
 def word_db(): # For read-only operations

@@ -4,6 +4,9 @@ from utils import db
 from statistics import cur_ratio, global_avg_ratio, cur_weight, global_avg_weight
 
 
+tolerated_limit = lambda value: value - db.error_tolerance
+
+
 def identify(): # Once this returns, user check comes in. 
     cur_rtio = cur_ratio()
     global_avg_rtio = global_avg_ratio()
@@ -27,11 +30,6 @@ def identify(): # Once this returns, user check comes in.
     else:
         return True
     
-
-def tolerated_limit(value):
-    tolerance = db.error_tolerance
-    return value - tolerance
-
 
 def analyze():  # AFTER IDENTIFYING
     if db.clb_status:  

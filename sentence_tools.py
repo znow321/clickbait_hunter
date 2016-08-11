@@ -16,8 +16,7 @@ def resolve_conflicts():  #  = conflicting status
     cls()
 
 
-def in_database(): 
-    return db.sentence in sentence_db()
+in_database = lambda: db.sentence in sentence_db()
 
 
 def in_conflict():

@@ -1,6 +1,18 @@
 from utils import db, word_db, sentence_db
 
 
+in_database = lambda word: word in word_db()
+
+
+can_subtract = lambda word: word_db()[word] >= 1
+
+
+decrease_check = lambda word: in_database(word) and can_subtract(word)
+
+
+sentence_split = db.sentence.split()
+
+
 def increase_weight():
     # Avoiding duplicates
     if can_add(database.sentence):
@@ -17,22 +29,6 @@ def decrease_weight():
             db.database['words'][word] -= 1
         else:
             db.database['words'][word] = 0
-
-
-def sentence_split():
-    return db.sentence.split()
-
-
-def in_database(word):
-    return word in word_db()
-
-
-def can_subtract(word):
-    return word_db()[word] >= 1
-
-
-def decrease_check(word):
-    return in_database(word) and can_subtract(word)
 
 
 def can_add(sentence):

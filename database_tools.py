@@ -8,17 +8,15 @@ def db_connect():
     db.db_cursor = db.db_conn.cursor()
 
 
-def db_disconnect():
-    db.db_conn.close() 
-
-
 def db_execute(command):
     db.db_cursor.execute(command)
     db.db_conn.commit()
 
 
-def db_fetch():
-    return db.db_cursor.fetchall()
+db_disconnect = lambda: db.db_conn.close() 
+
+
+db_fetch = lambda: db.db_cursor.fetchall()
 
 
 def remove_queue():  

@@ -3,23 +3,16 @@ from re import findall
 from word_tools import sentence_split
 
 
-# [lower, upper_start, upper, num]
+lower = lambda sentence: len(findall(r'\b[a-z\']+\b', sentence))
 
 
-def lower(sentence):
-    return len(findall(r'\b[a-z\']+\b', sentence))
+upper_start = lambda sentence: len(findall(r'\b[A-Z][a-z\']+\b', sentence))
 
 
-def upper_start(sentence):
-    return len(findall(r'\b[A-Z][a-z\']+\b', sentence))
-    
-
-def upper(sentence):
-    return len(findall(r'\b[A-Z\']+\b',sentence))
+upper = lambda sentence: len(findall(r'\b[a-z\']+\b',sentence))
 
 
-def number(sentence):
-    return len(findall(r'\b[0-9]+\b',sentence))
+number = lambda sentence: len(findall(r'\b[0-9]+\b',sentence))
 
 
 def percentages(report): # For both global & current 
