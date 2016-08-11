@@ -1,33 +1,33 @@
-from utils import database, cls, error
+from utils import db, cls, error, sentence_db, word_db
 
 
 def update_sentence_db():
     sentence = database.sentence
     if in_conflict():
         resolve_conflicts()
-    database.database['sentences'][sentence] = database.clb_status 
+    sentence_db()[sentence] = db.clb_status 
     # Overwrites the database entry ^
-    cls()
 
 
 def resolve_conflicts():  #  = conflicting status
-    sentence = database.sentence
     cls()
+    sentence = db.sentence
     choice = get_answer()
     if choice == 'y':
-        database.clb_status = database.clb_status
+        db.clb_status = db.clb_status # Not sure what does this do
+    cls()
 
 
 def in_database(): 
-    sentence = database.sentence
-    return sentence in database.database['sentences']
+    sentence = db.sentence
+    return sentence in sentence_db()
 
 
 def in_conflict():
-    clb_status = database.clb_status
-    sentence = database.sentence
+    clb_status = db.clb_status
+    sentence = db.sentence
     if in_database():
-        return database.database['sentences'][sentence] != clb_status
+        return sentence_db()[sentence] != clb_status
     else:
         return False
 
@@ -43,8 +43,8 @@ def get_answer(): # Asking cycle
 
 
 def get_question(): 
-    clb_status = database.clb_status
-    sentence = database.sentence
+    clb_status = db.clb_status
+    sentence = db.sentence
     status = ('clickbait', 'non-clickbait')
     if clb_status: 
         status = status[::-1]

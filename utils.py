@@ -4,7 +4,7 @@ import platform
 from time import sleep
 
 
-class database: # Universal data storage function
+class db: # Universal data storage function
     sentence = ''
     clb_status = None
     error_tolerance = None
@@ -35,21 +35,20 @@ def get_save_dir():
 
 #  Creates save directory with a .gitignore if it's not already there
 def init_save_dir():
-	if not path.exists('clickbait_database'):
-		makedirs('clickbait_database')
-        directory = path.join('clickbait_database','.gitignore'), 'w'
-		create_gitignore = open(directory)
-		create_gitignore.write('*\n!.gitignore')
-		create_gitignore.close()
+    if not path.exists('clickbait_database'):
+        makedirs('clickbait_database')
+        directory = path.join('clickbait_database','.gitignore')
+        with open(directory, 'w') as mk_git:
+            mk_git.write('*\n!.gitignore')
 
 
-def database_exists():
+def db_exists():
 	return glob(get_save_dir())
 
 
-def word_database():
-    return database.database['words']
+def word_db(): # For read-only operations
+    return db.database['words']
 
 
-def sentence_database():
-    return database.database['sentences']
+def sentence_db(): # For read-only operations
+    return db.database['sentences']

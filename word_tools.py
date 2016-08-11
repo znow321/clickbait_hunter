@@ -1,4 +1,4 @@
-from utils import database
+from utils import db, word_db, sentence_db
 
 
 def increase_weight():
@@ -7,30 +7,30 @@ def increase_weight():
     if can_add(database.sentence):
         for word in sentence:
             if in_database(word):
-                database.database['words'][word] += 1
+                db.database['words'][word] += 1
             else:
-                database.database['words'][word] = 1
+                db.database['words'][word] = 1
 
 
 def decrease_weight():
     sentence = sentence_split()
     for word in sentence:
         if decrease_check(word):
-            database.database['words'][word] -= 1
+            db.database['words'][word] -= 1
         else:
-            database.database['words'][word] = 0
+            db.database['words'][word] = 0
 
 
 def sentence_split():
-    return database.sentence.split()
+    return db.sentence.split()
 
 
 def in_database(word):
-    return word in database.database['words']
+    return word in word_db()
 
 
 def can_subtract(word):
-    return database.database['words'][word] >= 1
+    return word_db()[word] >= 1
 
 
 def decrease_check(word):
@@ -40,7 +40,7 @@ def decrease_check(word):
 def can_add(sentence):
     sentence_in_db = True
     try:
-        sentence_false = database.database['sentences'][sentence] == False
+        sentence_false = sentence_db()[sentence] == False
     except KeyError:
         sentence_in_db = False
     if not sentence_in_db:

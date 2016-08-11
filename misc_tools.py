@@ -1,8 +1,7 @@
 from word_tools import increase_weight, decrease_weight
 from sentence_tools import update_sentence_db
-from utils import database
-from statistics import cur_ratio, global_avg_ratio, 
-                        cur_weight, global_avg_weight
+from utils import db
+from statistics import cur_ratio, global_avg_ratio, cur_weight, global_avg_weight
 
 
 def identify(): # Once this returns, user check comes in. 
@@ -12,13 +11,12 @@ def identify(): # Once this returns, user check comes in.
     cur_wght = cur_weight()
     global_avg_wght = global_avg_weight()
 
-    sentence = database.sentence
-    sentence_db = database.database['sentences']
+    sentence = db.sentence
 
     total_score = 0 # Max 100%
 
-    if sentence in sentence_db:
-        return sentence_db[sentence]
+    if sentence in sentence_db():
+        return sentence_db()[sentence]
     else:
         for cur, globl in zip(cur_rtio, global_avg_rtio):
             if cur_ratio >= tolerated_limit(globl):
@@ -33,12 +31,12 @@ def identify(): # Once this returns, user check comes in.
     
 
 def tolerated_limit(value):
-    tolerance = database.error_tolerance
+    tolerance = db.error_tolerance
     return value - tolerance
 
 
 def analyze():  # AFTER IDENTIFYING
-    clb_status = database.clb_status
+    clb_status = db.clb_status
     if clb_status:  
         increase_weight() # Word update('words')
     else:

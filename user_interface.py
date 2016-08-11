@@ -1,6 +1,6 @@
-from utils import cls, sentence_database
+from utils import cls, sentence_db
 from misc_tools import analyze, identify
-from utils import database, error
+from utils import db, error
 
 
 def get_choice(): 
@@ -45,10 +45,10 @@ def route():
 
 def user_confirmation(clb_status):
     sentence = database.sentence
-    if sentence not in database.database['sentences']:
+    if sentence not in sentence_db():
         status = 'is' if clb_status else "isn't"
         sentence = 'The clickbait identifier algorithm thinks the'  \
-                   'sentence "%s" %s clickbait, '
+                   'sentence "%s" %s clickbait, ' \
                    'do you agree?\n(Y/N)' % (sentence, status)
     else:
         status = 'clickbait' if clb_status else 'non-clickbait'

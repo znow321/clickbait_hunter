@@ -1,30 +1,30 @@
-from utils import database_exists, get_save_dir
+from utils import db_exists, get_save_dir, sentence_db, word_db
 import sqlite3
-from utils import database
+from utils import db
 
 
 def db_connect():
-    database.db_conn = sqlite3.connect(get_save_dir())
-    database.db_cursor = database.db_conn.cursor()
+    db.db_conn = sqlite3.connect(get_save_dir())
+    db.db_cursor = database.db_conn.cursor()
 
 
 def db_disconnect():
-    database.db_conn.close() 
+    db.db_conn.close() 
 
 
 def db_execute(command):
-    database.db_cursor.execute(command)
-    database.db_conn.commit()
+    db.db_cursor.execute(command)
+    db.db_conn.commit()
 
 
 def db_fetch():
-    return database.db_cursor.fetchall()
+    return db.db_cursor.fetchall()
 
 
 def remove_queue():  
-    for table, values in database.db_legacy.items():
+    for table, values in db.db_legacy.items():
         for item, value in values.items():
-            if not item in database.database[table]:
+            if not item in db.database[table]:
                 sql_remove(table, item)
 
 
@@ -33,8 +33,8 @@ def db_save(): # INTERFACE FUNCTION
     sql_create_tables()
     remove_queue()
     bool_convertor("bool_to_binary")
-    for table in database.tables:
-            for item, value in database.database[table].items():
+    for table in db.tables:
+            for item, value in db.database[table].items():
                 if item_exists(table, item):
                     if not is_value_current(table, item, value): 
                         sql_update(table, item, value)
@@ -46,34 +46,33 @@ def db_save(): # INTERFACE FUNCTION
 def db_load(): # SECOND INTERFACE FUNCTION
     if database_exists():
         db_connect()
-        for table in database.tables: 
+        for table in db.tables: 
             db_execute("SELECT item, value FROM %s" % (table))                                   
             for item, value in db_fetch():
-                database.database[table][item] = value
+                db.database[table][item] = value
         bool_convertor("binary_to_bool")
         db_disconnect()
-    database.db_legacy = database.database
+    database.db_legacy = db.database
 
 
 def bool_convertor(mode):
-    sentences_temp = database.database['sentences']
     if mode == "bool_to_binary":
-        for key, value in sentences_temp.items(): 
+        for key, value in sentence_db.items(): 
             if value == True:
-                database.database['sentences'][key] = 1
+                db.database['sentences'][key] = 1
             else:
-                database.database['sentences'][key] = 0
+                db.database['sentences'][key] = 0
     elif mode == "binary_to_bool":
-        for key, value in sentences_temp.items(): 
+        for key, value in sentence_db().items(): 
             if value == 1:
-                database.database['sentences'][key] = True
+                db.database['sentences'][key] = True
             elif value == 0:
-                database.database['sentences'][key] = False
+                db.database['sentences'][key] = False
 
 
 def gen_tables():
     #  Table creation template
-    for table in database.tables:
+    for table in db.tables:
         yield '%s(item TEXT, value INTEGER)' % (table)
 
 
