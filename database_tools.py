@@ -5,7 +5,7 @@ from utils import db
 
 def db_connect():
     db.db_conn = sqlite3.connect(get_save_dir())
-    db.db_cursor = database.db_conn.cursor()
+    db.db_cursor = db.db_conn.cursor()
 
 
 def db_disconnect():

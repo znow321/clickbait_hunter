@@ -33,12 +33,15 @@ def get_save_dir():
 	return path.join('clickbait_database', 'database.sqlite')
 
 
+def git_dir():
+    return path.join('clickbait_database','.gitignore')
+
+
 #  Creates save directory with a .gitignore if it's not already there
 def init_save_dir():
     if not path.exists('clickbait_database'):
         makedirs('clickbait_database')
-        directory = path.join('clickbait_database','.gitignore')
-        with open(directory, 'w') as mk_git:
+        with open(git_dir(), 'w') as mk_git:
             mk_git.write('*\n!.gitignore')
 
 

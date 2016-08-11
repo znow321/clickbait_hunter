@@ -11,12 +11,10 @@ def identify(): # Once this returns, user check comes in.
     cur_wght = cur_weight()
     global_avg_wght = global_avg_weight()
 
-    sentence = db.sentence
-
     total_score = 0 # Max 100%
 
-    if sentence in sentence_db():
-        return sentence_db()[sentence]
+    if db.sentence in sentence_db():
+        return sentence_db()[db.sentence]
     else:
         for cur, globl in zip(cur_rtio, global_avg_rtio):
             if cur_ratio >= tolerated_limit(globl):
@@ -36,8 +34,7 @@ def tolerated_limit(value):
 
 
 def analyze():  # AFTER IDENTIFYING
-    clb_status = db.clb_status
-    if clb_status:  
+    if db.clb_status:  
         increase_weight() # Word update('words')
     else:
         decrease_weight()  # Word update('words')

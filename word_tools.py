@@ -3,9 +3,8 @@ from utils import db, word_db, sentence_db
 
 def increase_weight():
     # Avoiding duplicates
-    sentence  = sentence_split()
     if can_add(database.sentence):
-        for word in sentence:
+        for word in sentence_split():
             if in_database(word):
                 db.database['words'][word] += 1
             else:
@@ -13,8 +12,7 @@ def increase_weight():
 
 
 def decrease_weight():
-    sentence = sentence_split()
-    for word in sentence:
+    for word in sentence_split():
         if decrease_check(word):
             db.database['words'][word] -= 1
         else:
