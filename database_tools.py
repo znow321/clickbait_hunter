@@ -3,6 +3,12 @@ import sqlite3
 from utils import db
 
 
+db_disconnect = lambda: db.db_conn.close() 
+
+
+db_fetch = lambda: db.db_cursor.fetchall()
+
+
 def db_connect():
     db.db_conn = sqlite3.connect(get_save_dir())
     db.db_cursor = db.db_conn.cursor()
@@ -11,12 +17,6 @@ def db_connect():
 def db_execute(command):
     db.db_cursor.execute(command)
     db.db_conn.commit()
-
-
-db_disconnect = lambda: db.db_conn.close() 
-
-
-db_fetch = lambda: db.db_cursor.fetchall()
 
 
 def remove_queue():  

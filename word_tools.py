@@ -10,7 +10,7 @@ can_subtract = lambda word: word_db()[word] >= 1
 decrease_check = lambda word: in_database(word) and can_subtract(word)
 
 
-sentence_split = db.sentence.split()
+sentence_split = lambda: db.sentence.split()
 
 
 def increase_weight():

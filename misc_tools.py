@@ -8,21 +8,15 @@ tolerated_limit = lambda value: value - db.error_tolerance
 
 
 def identify(): # Once this returns, user check comes in. 
-    cur_rtio = cur_ratio()
-    global_avg_rtio = global_avg_ratio()
-
-    cur_wght = cur_weight()
-    global_avg_wght = global_avg_weight()
-
     total_score = 0 # Max 100%
 
     if db.sentence in sentence_db():
         return sentence_db()[db.sentence]
     else:
-        for cur, globl in zip(cur_rtio, global_avg_rtio):
+        for cur, globl in zip(cur_ratio(), global_avg_ratio()):
             if cur_ratio >= tolerated_limit(globl):
                total_score += 12.5 
-        if cur_wght >= tolerated_limit(global_avg_wght):
+        if cur_weight() >= tolerated_limit(global_avg_weight()):
             total_score += 50
 
     if total_score < 75:

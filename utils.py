@@ -4,6 +4,27 @@ import platform
 from time import sleep
 
 
+get_save_dir = lambda: path.join('clickbait_database', 'database.sqlite')
+
+
+git_dir = lambda: path.join('clickbait_database','.gitignore')
+
+
+db_exists = lambda: glob(get_save_dir())
+
+
+def word_db(): # For read-only operations
+    return db.database['words']
+
+
+def sentence_db(): # For read-only operations
+    return db.database['sentences']
+
+
+def db_legacy():
+    return db.db_legacy
+
+
 class db: # Universal data storage function
     sentence = ''
     clb_status = None
@@ -29,26 +50,9 @@ def error(message, sleep_time=0):
 	cls()
 
 
-get_save_dir = lambda: path.join('clickbait_database', 'database.sqlite')
-
-
-git_dir = lambda: path.join('clickbait_database','.gitignore')
-
-
 #  Creates save directory with a .gitignore if it's not already there
 def init_save_dir():
     if not path.exists('clickbait_database'):
         makedirs('clickbait_database')
         with open(git_dir(), 'w') as mk_git:
             mk_git.write('*\n!.gitignore')
-
-
-db_exists = lambda: glob(get_save_dir())
-
-
-def word_db(): # For read-only operations
-    return db.database['words']
-
-
-def sentence_db(): # For read-only operations
-    return db.database['sentences']

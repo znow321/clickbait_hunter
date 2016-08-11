@@ -1,6 +1,9 @@
 from utils import db, cls, error, sentence_db, word_db
 
 
+in_database = lambda: db.sentence in sentence_db()
+
+
 def update_sentence_db():
     if in_conflict():
         resolve_conflicts()
@@ -9,31 +12,29 @@ def update_sentence_db():
 
 
 def resolve_conflicts():  #  = conflicting status
-    cls()
     choice = get_answer()
     if choice == 'y':
         db.clb_status = db.clb_status # Not sure what does this do
     cls()
 
 
-in_database = lambda: db.sentence in sentence_db()
-
-
 def in_conflict():
     if in_database():
         return sentence_db()[db.sentence] != db.clb_status
-    else:
-        return False
+    return False
 
 
 def get_answer(): # Asking cycle
     while True:
+        cls()
         try:
             choice = input(get_question()).lower()
             assert(choice in ['y', 'n'])
             return choice
         except (ValueError, AssertionError):
             error('Invalid option entered, please try again...', 1)
+    finally:
+        cls()
 
 
 def get_question(): 
