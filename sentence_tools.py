@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from utils import db, cls, error, sentence_db, word_db
 
 

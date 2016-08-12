@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from utils import db_exists, get_save_dir, sentence_db, word_db
 import sqlite3
 from utils import db

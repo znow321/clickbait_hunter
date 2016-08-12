@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from utils import init_save_dir
 from database_tools import db_load, db_save
 from re import sub

@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from utils import db, sentence_db
 from re import findall
 from word_tools import sentence_split

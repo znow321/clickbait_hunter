@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from word_tools import increase_weight, decrease_weight
 from sentence_tools import update_sentence_db
 from utils import db

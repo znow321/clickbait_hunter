@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from utils import cls, sentence_db
 from misc_tools import analyze, identify
 from utils import db, error
